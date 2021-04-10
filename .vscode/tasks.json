@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "npm: start",
+			"detail": "react-native start"
+		},
+		{
+			"type": "npm",
+			"script": "android",
+			"problemMatcher": [],
+			"label": "npm: android",
+			"detail": "react-native run-android"
+		}
+	]
+}
