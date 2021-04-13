@@ -1,5 +1,5 @@
 export default {
-    clientId: 'DIRTIFGCTZEXDXSLIAUXDNZUPTTNBGGN',
+    clientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     redirectUrl: 'https://reactTestApp/oauth',
     tokenEndpoint: 'https://api.tdameritrade.com/v1/oauth2/token'
 }
