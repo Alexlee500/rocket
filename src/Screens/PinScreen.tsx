@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
-import {Text, View, Button} from 'react-native';
+import { Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Col, Row, Grid } from "react-native-easy-grid";
 import * as LocalAuthentication from 'expo-local-authentication';
 
 import { useDispatch, useSelector } from 'react-redux';

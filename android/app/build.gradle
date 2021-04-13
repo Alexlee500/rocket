@@ -137,7 +137,8 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [appAuthRedirectScheme: 'com.rocket.oauth']
+        manifestPlaceholders = [appAuthRedirectScheme: 'https://reactTestApp/oauth']
+
     }
     splits {
         abi {

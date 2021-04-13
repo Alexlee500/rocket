@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+
   package="com.rocket">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,5 +23,19 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <activity android:name="net.openid.appauth.RedirectUriReceiverActivity"
+      tools:node="replace">
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="https"
+                android:host="reacttestapp"
+                android:path="/oauth" />
+        </intent-filter>
+      </activity>
+
+
     </application>
 </manifest>
