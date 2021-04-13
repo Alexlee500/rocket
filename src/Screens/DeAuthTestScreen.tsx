@@ -4,7 +4,7 @@ import { BarChart, Grid } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { deauthenticate } from '../Redux/features/authSlice';
+import { getTokens } from '../Redux/features/tdaSlice';
 import { RootState } from '../Redux/rootReducer';
 
 import * as tda from '../api/AmeritradeApi';
@@ -30,7 +30,7 @@ export default function DeAuthTestScreen(){
         </BarChart>
         <Button   
             title="Log in with TDA"
-            onPress={() => loginTest()} 
+            onPress={() => dispatch(getTokens())} 
         />
         </>
     )

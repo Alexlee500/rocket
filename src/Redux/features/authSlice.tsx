@@ -35,7 +35,7 @@ export const authSlice = createSlice({
         authenticate: ( state ) => {
             state.authenticated = true;
         },
-        deauthenticate: state => {
+        deauthenticate: ( state ) => {
             state.authenticated = false;
         }
     }

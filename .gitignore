@@ -57,3 +57,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+#Ameritrade conf
+src/configs/AmeritradeConf.tsx

@@ -3,23 +3,20 @@ import * as SecureStore from 'expo-secure-store';
 
 
 import AmeritradeConf from '../configs/AmeritradeConf'
-//import SecureStoreVars from '../configs/SecureStoreVars';
+import SecureStoreVars from '../vars/SecureStoreVars';
 
 
-const clientId:string = 'DIRTIFGCTZEXDXSLIAUXDNZUPTTNBGGN';
-const redirectUrl:string = 'https://reactTestApp/oauth';
-const tokenEndpoint:string = 'https://api.tdameritrade.com/v1/oauth2/token';
 
 export async function oauthApiLogin() {
     console.log('tda login');
     var encodedUri:string = encodeURIComponent(AmeritradeConf.redirectUrl);
     var encodedClientId:string = encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
     const config:AuthConfiguration = {
-        clientId: clientId,
-        redirectUrl: redirectUrl,
+        clientId: AmeritradeConf.clientId,
+        redirectUrl: AmeritradeConf.redirectUrl,
         serviceConfiguration: {
             authorizationEndpoint: 'https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=' + encodedUri + '&client_id=' + encodedClientId,
-            tokenEndpoint: tokenEndpoint
+            tokenEndpoint: AmeritradeConf.tokenEndpoint
         },
         usePKCE: false,
         skipCodeExchange: true,
@@ -57,16 +54,18 @@ async function getTokensFromAuthCode(authCode:string) {
     })
     .then(response => response.json())
     .then((responseJson)=>{
-        console.log(responseJson.access_token);
-        console.log(responseJson.refresh_token);
+        console.log(`Access Token: ${responseJson.access_token}`);
+        console.log(`Refresh Token: ${responseJson.refresh_token}`);
 
-        SecureStore.setItemAsync('tdaAccessToken', responseJson.access_token);
-        SecureStore.setItemAsync('tdaRefreshToken', responseJson.refresh_token);
+        SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
+        SecureStore.setItemAsync(SecureStoreVars.RefreshToken, responseJson.refresh_token);
     })
     
 }
 
-async function getAccessFromRefreshToken(refreshToken:string){
+export async function getAccessFromRefreshToken(refreshToken:string){
+    console.log('getAccessFromRefreshToken');
+
     var postBody:string =  "grant_type=refresh_token";
     postBody += "&refresh_token=" + encodeURIComponent(refreshToken);
     postBody += "&access_type=";
@@ -83,8 +82,8 @@ async function getAccessFromRefreshToken(refreshToken:string){
     })
     .then(response => response.json())
     .then((responseJson)=>{
-        console.log("refresh");
-        SecureStore.setItemAsync('tdaRefreshToken', responseJson.access_token);
+        //console.log(`Access Token: ${responseJson.access_token}`);
+        SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
     })
 }
 
