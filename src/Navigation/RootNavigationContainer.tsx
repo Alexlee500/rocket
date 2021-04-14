@@ -7,22 +7,43 @@ import { RootState } from '../Redux/rootReducer';
 import  AuthTestScreen  from '../Screens/AuthTestScreen'
 import  DeAuthTestScreen from '../Screens/DeAuthTestScreen'
 
+import OauthPromptScreen from '../Screens/OauthPromptScreen';
 import AuthStackNavigator from './AuthStackNavigator';
 import AppStackNavigator from './AppStackNavigator';
+import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
 
 const Stack = createStackNavigator();
 
 export default function RootNavigationContainer(){
     const authenticated = useSelector( (state: RootState) => state.auth.authenticated )
+    const access = useSelector( (state: RootState) => state.tda.accessToken )
+    const refresh = useSelector( (state: RootState) => state.tda.refreshToken )
+
+    console.log(`Access Token? ${access}`);
+    console.log(`Refresh Token? ${refresh}`);
 
     return (
         <NavigationContainer>
             <Stack.Navigator headerMode="none">
                 { authenticated ? (
-                    <Stack.Screen
+                    access ? (
+                        <Stack.Screen
                         name="AppStack"
                         component={AppStackNavigator}
-                    />
+                        />
+                    ) : (
+                        refresh ? (
+                            <Stack.Screen
+                            name="Loading"
+                            component={LoginLoadingScreen}
+                            />
+                        ) : (
+                            <Stack.Screen
+                            name="OauthPrompt"
+                            component={OauthPromptScreen}
+                            />
+                        )
+                    )
                 ):(
                     <Stack.Screen
                         name="AuthStack"

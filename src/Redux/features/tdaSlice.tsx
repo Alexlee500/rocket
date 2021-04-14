@@ -11,18 +11,18 @@ interface tdaSlice{
     accessToken: string
 }
 
-export let getTokens = () => {
+export let getTokens = (promptOauth: boolean) => {
     return async (dispatch:Dispatch) => {
         console.log('get Refresh Token from storage');
         try{
             let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-
-            if (refToken == null){
+            
+            if (promptOauth && refToken == null){
                 console.log('refreshToken is null');
                 await oauthApiLogin();
                 refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
             }
-
+            
             console.log(`Refresh Token: ${refToken}`);
             await getAccessFromRefreshToken(refToken);
 

@@ -1,7 +1,6 @@
 import {authorize, prefetchConfiguration, AuthConfiguration} from 'react-native-app-auth';
 import * as SecureStore from 'expo-secure-store';
 
-
 import AmeritradeConf from '../configs/AmeritradeConf'
 import SecureStoreVars from '../vars/SecureStoreVars';
 

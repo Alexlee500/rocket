@@ -29,8 +29,7 @@ export default function DeAuthTestScreen(){
             <Grid />
         </BarChart>
         <Button   
-            title="Log in with TDA"
-            onPress={() => dispatch(getTokens())} 
+            title="Log Out"
         />
         </>
     )
