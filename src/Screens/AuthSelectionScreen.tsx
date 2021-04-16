@@ -6,6 +6,8 @@ import * as LocalAuthentication from 'expo-local-authentication';
 
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { authenticate, promptBio } from '../Redux/features/authSlice';
+import { clearTokens } from '../Redux/features/tdaSlice';
+
 import { RootState } from '../Redux/rootReducer';
 
 
@@ -22,9 +24,14 @@ export default function AuthSelectionScreen(){
             <Text></Text>
 
             <Button
+                title="DEBUG:CLEAR TOKENS"
+                onPress={() => dispatch(clearTokens())}
+            />  
+            <Button
                 title="Authenticate Using Biometrics"
                 onPress={() => dispatch(promptBio())}
             />  
+            
         </View>      
     )
 }

@@ -7,35 +7,56 @@ import { oauthApiLogin, getAccessFromRefreshToken } from '../../api/AmeritradeAp
 import SecureStoreVars from '../../vars/SecureStoreVars';
 
 interface tdaSlice{
+
     refreshToken: string
     accessToken: string
 }
-
-export let getTokens = (promptOauth: boolean) => {
+export let clearTokens = () => {
     return async (dispatch:Dispatch) => {
-        console.log('get Refresh Token from storage');
+        console.log('logging out');
         try{
-            let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-            
-            if (promptOauth && refToken == null){
-                console.log('refreshToken is null');
-                await oauthApiLogin();
-                refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-            }
-            
-            console.log(`Refresh Token: ${refToken}`);
-            await getAccessFromRefreshToken(refToken);
-
-            let acsToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-            console.log(`Access Token: ${acsToken}`);
-
-            dispatch(setRefreshToken(refToken));
-            dispatch(setAccessToken(acsToken));
-            console.log('done');
+            dispatch(setRefreshToken(null));
+            dispatch(setAccessToken(null));
+            await SecureStore.deleteItemAsync(SecureStoreVars.AccessToken);
+            await SecureStore.deleteItemAsync(SecureStoreVars.RefreshToken);
         }
         catch(error){
             console.log(error);
         }
+    }
+}
+
+export let getTokensFromOauth = () => {
+    return async (dispatch:Dispatch) => {
+        console.log('get Refresh Token from storage');
+        try{
+            let oauthResponse = await oauthApiLogin();
+            SecureStore.setItemAsync(SecureStoreVars.RefreshToken, oauthResponse.refresh_token);
+            dispatch(setRefreshToken(oauthResponse.refresh_token));
+            dispatch(setAccessToken(oauthResponse.access_token));
+            console.log('getTokens Done');
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+}
+
+export let getRefreshFromStorage = () => {
+    console.log('getRefreshFromStorage')
+    return async(dispatch:Dispatch) => {
+        let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
+        dispatch(setRefreshToken(refToken));
+    }
+}
+
+export let getAccessFromStoredRefresh = () => {
+    console.log('getAccessFromStoredRefresh')
+    return async(dispatch:Dispatch) => {
+        let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
+        var res = await getAccessFromRefreshToken(refToken);
+        dispatch(setAccessToken(res.access_token));
+        dispatch(setRefreshToken(refToken));
     }
 }
 

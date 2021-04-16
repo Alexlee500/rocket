@@ -6,7 +6,7 @@ import SecureStoreVars from '../vars/SecureStoreVars';
 
 
 
-export async function oauthApiLogin() {
+export async function oauthApiLogin() : Promise<any> {
     console.log('tda login');
     var encodedUri:string = encodeURIComponent(AmeritradeConf.redirectUrl);
     var encodedClientId:string = encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
@@ -23,19 +23,26 @@ export async function oauthApiLogin() {
     };
 
     try{
+        
         const result = await authorize(config);
         
-        await getTokensFromAuthCode(result.authorizationCode);
+        const res = await getTokensFromAuthCode(result.authorizationCode)
+
+        console.log(`oauth Login Done with`)
+        return res;
+
+
     }catch(error){
         console.error(error);
+        return null;
     }
 }
 
 
 
 // API call to get Access token and Refresh Token from Auth Code
-async function getTokensFromAuthCode(authCode:string) {
-
+async function getTokensFromAuthCode(authCode:string) : Promise<JSON> {
+    console.log('getTokensFromAuthCode')
 
     var postBody:string =  "grant_type=authorization_code";
     postBody += "&refresh_token=";
@@ -44,6 +51,7 @@ async function getTokensFromAuthCode(authCode:string) {
     postBody += "&client_id=" + encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
     postBody += "&redirect_uri=" + encodeURIComponent(AmeritradeConf.redirectUrl);
 
+    /*
     fetch(AmeritradeConf.tokenEndpoint, {
         method: 'POST',
         headers: {
@@ -53,16 +61,28 @@ async function getTokensFromAuthCode(authCode:string) {
     })
     .then(response => response.json())
     .then((responseJson)=>{
-        console.log(`Access Token: ${responseJson.access_token}`);
-        console.log(`Refresh Token: ${responseJson.refresh_token}`);
+        console.log(responseJson)
+        //console.log(`Access Token: ${responseJson.access_token}`);
+        //console.log(`Refresh Token: ${responseJson.refresh_token}`);
 
-        SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
-        SecureStore.setItemAsync(SecureStoreVars.RefreshToken, responseJson.refresh_token);
+        //SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
+        //SecureStore.setItemAsync(SecureStoreVars.RefreshToken, responseJson.refresh_token);
+        console.log(`get tokens done with ${responseJson}`)
+        return responseJson;
     })
-    
+    */
+
+    const res = await fetch(AmeritradeConf.tokenEndpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },  
+                                body: postBody
+                            })                        
+    return await res.json();
 }
 
-export async function getAccessFromRefreshToken(refreshToken:string){
+export async function getAccessFromRefreshToken(refreshToken:string) : Promise<any>{
     console.log('getAccessFromRefreshToken');
 
     var postBody:string =  "grant_type=refresh_token";
@@ -72,18 +92,16 @@ export async function getAccessFromRefreshToken(refreshToken:string){
     postBody += "&client_id=" + encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
     postBody += "&redirect_uri=";
 
-    fetch(AmeritradeConf.tokenEndpoint, {
+    var res = await fetch(AmeritradeConf.tokenEndpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },  
         body: postBody
-    })
-    .then(response => response.json())
-    .then((responseJson)=>{
-        //console.log(`Access Token: ${responseJson.access_token}`);
-        SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
-    })
+    });
+
+
+    return await res.json();
 }
 
 

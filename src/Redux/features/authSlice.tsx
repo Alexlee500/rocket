@@ -14,7 +14,6 @@ export let promptBio = () => {
         try{
             const res = await LocalAuthentication.authenticateAsync({promptMessage: 'Unlock', cancelLabel: 'cancel', disableDeviceFallback: true});
             if (res.success){
-                console.log('succ');
                 dispatch(authenticate());
             }
         }catch(error){

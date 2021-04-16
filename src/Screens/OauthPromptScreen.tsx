@@ -3,20 +3,19 @@ import  {Text, View, Button } from 'react-native';
 import * as tda from '../api/AmeritradeApi';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getTokens } from '../Redux/features/tdaSlice';
+import { RootState } from '../Redux/rootReducer';
+import { getTokensFromOauth, getRefreshFromStorage} from '../Redux/features/tdaSlice';
 
 export default function OauthPromptScreen() {
     const dispatch = useDispatch();
+    useSelector( (state: RootState) => state.tda.accessToken )
+    useSelector( (state: RootState) => state.tda.refreshToken )
 
-    useEffect(() => {
-        console.log('Oauth Prompt Screen Load');
-        dispatch(getTokens(false));
-
-    }, []);
-
+    console.log('Oauth promot Screen');
+    
     let tdaLogin = async() => {
         console.log('TDA Login');
-        dispatch(getTokens(true));
+        dispatch(getTokensFromOauth());
     }
 
     return (
