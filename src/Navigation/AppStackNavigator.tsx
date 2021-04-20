@@ -24,7 +24,6 @@ export default function AppStackNavigator(){
 
     const access = useSelector( (state: RootState) => state.tda.accessToken )
     const refresh = useSelector( (state: RootState) => state.tda.refreshToken )
-    console.log('access + refresh ' + access+ refresh);
     return (
         <Stack.Navigator headerMode="none">
             {

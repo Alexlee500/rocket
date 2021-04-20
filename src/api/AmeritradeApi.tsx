@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import AmeritradeConf from '../configs/AmeritradeConf'
 import SecureStoreVars from '../vars/SecureStoreVars';
+import { acc } from 'react-native-reanimated';
 
 
 
@@ -104,7 +105,17 @@ export async function getAccessFromRefreshToken(refreshToken:string) : Promise<a
     return await res.json();
 }
 
-
+export async function getuserprincipals(accessToken: string) : Promise<any>{
+    console.log('getuserprincipals');
+    const resourceUrl = "https://api.tdameritrade.com/v1/userprincipals?fields=streamerSubscriptionKeys%2CstreamerConnectionInfo";
+    var res = await fetch(resourceUrl, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    });
+    var resJson = await res.json();
+    return resJson;
+}
 
 
 
