@@ -18,7 +18,7 @@ export default function AppStackNavigator(){
 
     console.log('app stack nav')
 
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
     //dispatch(clearTokens());
 
 

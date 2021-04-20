@@ -84,7 +84,6 @@ async function getTokensFromAuthCode(authCode:string) : Promise<JSON> {
 }
 
 export async function getAccessFromRefreshToken(refreshToken:string) : Promise<any>{
-    console.log('getAccessFromRefreshToken');
 
     var postBody:string =  "grant_type=refresh_token";
     postBody += "&refresh_token=" + encodeURIComponent(refreshToken);
@@ -106,7 +105,7 @@ export async function getAccessFromRefreshToken(refreshToken:string) : Promise<a
 }
 
 export async function getuserprincipals(accessToken: string) : Promise<any>{
-    console.log('getuserprincipals');
+    console.log(`getuserprincipals ${accessToken}`);
     const resourceUrl = "https://api.tdameritrade.com/v1/userprincipals?fields=streamerSubscriptionKeys%2CstreamerConnectionInfo";
     var res = await fetch(resourceUrl, {
         headers: {

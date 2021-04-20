@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { WEBSOCKET_CONNECT, WEBSOCKET_MESSAGE, WEBSOCKET_OPEN } from '@giantmachines/redux-websocket'
 import * as tda from '../../api/AmeritradeApi';
 import SecureStoreVars from '../../vars/SecureStoreVars';
-import store from '../store';
+//import store from '../store';
 
 interface tdaSlice{
     //socketConnected: boolean
@@ -28,7 +28,6 @@ export const tdaSlice = createSlice({
     reducers: {
         
         setRefreshToken: ( state, action: PayloadAction<string>) => {
-            console.log('setRefresh1')
             state.refreshToken = action.payload;
         },
         setAccessToken: ( state, action: PayloadAction<string>) => {
@@ -42,11 +41,16 @@ export const tdaSlice = createSlice({
         builder
         .addCase('REDUX_WEBSOCKET::OPEN', (state, action) => {
             console.log('sock open');
-
+            
             console.log(action);
+        })
+        .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
+            console.log('sock send');
+            console.log(JSON.stringify(action.payload))
         })
         .addCase('REDUX_WEBSOCKET::MESSAGE', (state, action) => {
             console.log('sock message');
+            console.log(JSON.stringify(action.payload))
 
             console.log(action);
         })
@@ -61,7 +65,6 @@ export let clearTokens = () => {
         try{
             dispatch(setRefreshToken(null));
             dispatch(setAccessToken(null));
-            await SecureStore.deleteItemAsync(SecureStoreVars.AccessToken);
             await SecureStore.deleteItemAsync(SecureStoreVars.RefreshToken);
         }
         catch(error){
@@ -87,32 +90,38 @@ export let getTokensFromOauth = () => {
 }
 
 export let getRefreshFromStorage = () => {
-    console.log('getRefreshFromStorage')
     return async(dispatch:Dispatch) => {
+        console.log('getRefreshFromStorage')
         let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
+
         dispatch(setRefreshToken(refToken));
     }
 }
 
-export let getAccessFromStoredRefresh = () => {
-    console.log('getAccessFromStoredRefresh')
-    return async(dispatch:Dispatch) => {
+export let getAccessFromRefresh = () => {
+    return async(dispatch:Dispatch, getState) => {
+        console.log('getAccessFromRefresh')
+
         let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
         var res = await tda.getAccessFromRefreshToken(refToken);
+        //dispatch(setRefreshToken(refToken));
+
+        let principalData = await tda.getuserprincipals(res.access_token)
+        dispatch(setUserPrincipalJson(principalData))
         dispatch(setAccessToken(res.access_token));
-        dispatch(setRefreshToken(refToken));
+
     }
 }
 
-export let getUserPrincipalData = () => {
-    console.log('getUserPrincipalData')
-    return async(dispatch:Dispatch) => {
-        console.log(store.getState().tda.accessToken)
-        let resJson = await tda.getuserprincipals(store.getState().tda.accessToken)
-        console.log(resJson)
-        dispatch(setUserPrincipalJson(resJson))
+export const getUserPrincipalData = () => {
+    return async(dispatch:Dispatch, getState) => {
+        console.log('getUserPrincipalData')
+        console.log(getState().tda.accessToken)
+        let resJson = await tda.getuserprincipals(getState().tda.accessToken)
+        dispatch(setUserPrincipalJson(await resJson))
     }   
 }
+
 
 
 export const selectUserPrincipals = state => state.tda.userPrincipals;

@@ -16,9 +16,7 @@ const Stack = createStackNavigator();
 
 export default function RootNavigationContainer(){
     const authenticated = useSelector( (state: RootState) => state.auth.authenticated )
-    const access = useSelector( (state: RootState) => state.tda.accessToken )
-    const refresh = useSelector( (state: RootState) => state.tda.refreshToken )
-    
+
 
     return (
         <NavigationContainer>
@@ -28,25 +26,6 @@ export default function RootNavigationContainer(){
                     name="App"
                     component={AppStackNavigator}
                     />
-                    /*
-                    access ? (
-                        <Stack.Screen
-                        name="AppStack"
-                        component={AppStackNavigator}
-                        />
-                    ) : (
-                        refresh ? (
-                            <Stack.Screen
-                            name="Loading"
-                            component={LoginLoadingScreen}
-                            />
-                        ) : (
-                            <Stack.Screen
-                            name="OauthPrompt"
-                            component={OauthPromptScreen}
-                            />
-                        )
-                    )*/
                 ):(
                     <Stack.Screen
                         name="AuthStack"
