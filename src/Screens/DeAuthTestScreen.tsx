@@ -2,11 +2,13 @@ import React, { useEffect } from 'react';
 import  {Text, View, Button } from 'react-native';
 import { BarChart, Grid } from 'react-native-svg-charts'
 import { connect, send  } from '@giantmachines/redux-websocket';
+import { parseISO } from 'date-fns'
 
 import { useDispatch, useSelector } from 'react-redux';
 import { clearTokens, getUserPrincipalData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { deauthenticate } from '../Redux/features/authSlice';
 import { RootState } from '../Redux/rootReducer';
+//import { connect, send } from '../Redux/middleware/WebsockMiddleware'
 
 
 import * as tda from '../api/AmeritradeApi';
@@ -15,9 +17,10 @@ import * as tda from '../api/AmeritradeApi';
 export default function DeAuthTestScreen(){
 
     useEffect(() => {
+
         //dispatch(getUserPrincipalData())
-        console.log('principals')
-        console.log(PrincipalData)
+        //console.log('principals')
+        //console.log(PrincipalData)
 
         authSock()
     }, [])
@@ -39,10 +42,14 @@ export default function DeAuthTestScreen(){
     }
 
 
-    const authSock = async() => {
-        var tokenTimeStampAsDateObj = new Date(PrincipalData.streamerInfo.tokenTimestamp);
-        var tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
+    const authSock = () => {
 
+r
+        var tokenTimeStampAsDateObj = parseISO(PrincipalData.streamerInfo.tokenTimestamp)
+        var tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
+        console.log(`Token Timestamp ${PrincipalData.streamerInfo.tokenTimestamp}`)
+        console.log(`obj ${tokenTimeStampAsDateObj}`)
+        console.log(`ms ${tokenTimeStampAsMs}`)
         var credentials = {
             "userid": PrincipalData.accounts[0].accountId,
             "token": PrincipalData.streamerInfo.token,
@@ -72,8 +79,9 @@ export default function DeAuthTestScreen(){
                 }
             }
         ]}
+       // await dispatch(connect(`wss://streamer-ws.tdameritrade.com/ws`))
 
-        dispatch(send(JSON.stringify(authSocket)))
+        dispatch(send(authSocket))
 
 
     }

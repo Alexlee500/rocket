@@ -16,6 +16,7 @@
     "@react-navigation/stack": "^5.14.4",
     "@reduxjs/toolkit": "^1.5.1",
     "add": "^2.0.6",
+    "date-fns": "^2.21.1",
     "expo-local-authentication": "^10.0.0",
     "expo-secure-store": "^10.0.0",
     "react": "17.0.1",

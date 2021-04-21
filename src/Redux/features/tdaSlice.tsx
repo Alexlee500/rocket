@@ -1,10 +1,13 @@
 import { createAction, createReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../rootReducer';
+import { connect, send  } from '@giantmachines/redux-websocket';
 import { bindActionCreators, Dispatch } from 'redux';
+
+import { RootState } from '../rootReducer';
 import * as SecureStore from 'expo-secure-store';
-import { WEBSOCKET_CONNECT, WEBSOCKET_MESSAGE, WEBSOCKET_OPEN } from '@giantmachines/redux-websocket'
 import * as tda from '../../api/AmeritradeApi';
 import SecureStoreVars from '../../vars/SecureStoreVars';
+
+//import { connect } from '../middleware/WebsockMiddleware'
 //import store from '../store';
 
 interface tdaSlice{
@@ -44,13 +47,18 @@ export const tdaSlice = createSlice({
             
             console.log(action);
         })
+        .addCase('REDUX_WEBSOCKET::CLOSED', (state, action) => {
+            console.log('sock closed');
+            
+            console.log(action);
+        })       
         .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
             console.log('sock send');
-            console.log(JSON.stringify(action.payload))
+            console.log(`Send Payload ${JSON.stringify(action.payload)}`)
         })
         .addCase('REDUX_WEBSOCKET::MESSAGE', (state, action) => {
             console.log('sock message');
-            console.log(JSON.stringify(action.payload))
+            console.log(`Message Payload ${JSON.stringify(action.payload)}`)
 
             console.log(action);
         })
@@ -59,7 +67,7 @@ export const tdaSlice = createSlice({
 })
 
 
-export let clearTokens = () => {
+export const clearTokens = () => {
     return async (dispatch:Dispatch) => {
         console.log('logging out');
         try{
@@ -73,7 +81,7 @@ export let clearTokens = () => {
     }
 }
 
-export let getTokensFromOauth = () => {
+export const getTokensFromOauth = () => {
     return async (dispatch:Dispatch) => {
         console.log('get Refresh Token from storage');
         try{
@@ -89,7 +97,7 @@ export let getTokensFromOauth = () => {
     }
 }
 
-export let getRefreshFromStorage = () => {
+export const getRefreshFromStorage = () => {
     return async(dispatch:Dispatch) => {
         console.log('getRefreshFromStorage')
         let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
@@ -98,12 +106,14 @@ export let getRefreshFromStorage = () => {
     }
 }
 
-export let getAccessFromRefresh = () => {
-    return async(dispatch:Dispatch, getState) => {
+export const getAccessFromRefresh = () => {
+    return async(dispatch:Dispatch) => {
         console.log('getAccessFromRefresh')
 
         let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
         var res = await tda.getAccessFromRefreshToken(refToken);
+        console.log(`Access Token${res.access_token}`)
+
         //dispatch(setRefreshToken(refToken));
 
         let principalData = await tda.getuserprincipals(res.access_token)
@@ -116,13 +126,73 @@ export let getAccessFromRefresh = () => {
 export const getUserPrincipalData = () => {
     return async(dispatch:Dispatch, getState) => {
         console.log('getUserPrincipalData')
-        console.log(getState().tda.accessToken)
         let resJson = await tda.getuserprincipals(getState().tda.accessToken)
+        console.log(JSON.stringify(resJson))
+
         dispatch(setUserPrincipalJson(await resJson))
     }   
 }
 
 
+function jsonToQueryString(json) {
+    return Object.keys(json).map(function(key) {
+            return encodeURIComponent(key) + '=' +
+                encodeURIComponent(json[key]);
+        }).join('&');
+}
+
+export const buildWebSockConnection = () => {
+    return async(dispatch:Dispatch, getState) => {
+        console.log('buildWebSockConnection')
+        let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
+        let res = await tda.getAccessFromRefreshToken(refToken);
+        let accToken = res.access_token;
+        let principalData = await tda.getuserprincipals(accToken)
+
+        dispatch(setUserPrincipalJson(principalData))
+        //await getUserPrincipalData()
+        //console.log(JSON.stringify(principalData))
+        //dispatch(connect(`wss://${principalData.streamerInfo.streamerSocketUrl}.com/ws`))
+
+        /*
+        var tokenTimeStampAsDateObj = new Date(principalData.streamerInfo.tokenTimestamp);
+        var tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
+        var credentials = {
+            "userid": principalData.accounts[0].accountId,
+            "token": principalData.streamerInfo.token,
+            "company": principalData.accounts[0].company,
+            "segment": principalData.accounts[0].segment,
+            "cddomain": principalData.accounts[0].accountCdDomainId,
+            "usergroup": principalData.streamerInfo.userGroup,
+            "accesslevel": principalData.streamerInfo.accessLevel,
+            "authorized": "Y",
+            "timestamp": tokenTimeStampAsMs,
+            "appid": principalData.streamerInfo.appId,
+            "acl": principalData.streamerInfo.acl
+        }
+
+        var authSocket = {    
+            "requests": [
+            {
+                "service": "ADMIN",
+                "command": "LOGIN",
+                "requestid": 0,
+                "account": principalData.accounts[0].accountId,
+                "source": principalData.streamerInfo.appId,
+                "parameters": {
+                    "credential": jsonToQueryString(credentials),
+                    "token": principalData.streamerInfo.token,
+                    "version": "1.0"
+                }
+            }
+        ]}
+
+        dispatch(send(JSON.stringify(authSocket)))
+
+        dispatch(setAccessToken(res.access_token));
+        */
+    }
+}
 
 export const selectUserPrincipals = state => state.tda.userPrincipals;
 export const { setRefreshToken, setAccessToken, setUserPrincipalJson } = tdaSlice.actions
