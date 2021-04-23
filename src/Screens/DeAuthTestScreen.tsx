@@ -44,7 +44,7 @@ export default function DeAuthTestScreen(){
 
     const authSock = () => {
 
-r
+
         var tokenTimeStampAsDateObj = parseISO(PrincipalData.streamerInfo.tokenTimestamp)
         var tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
         console.log(`Token Timestamp ${PrincipalData.streamerInfo.tokenTimestamp}`)
