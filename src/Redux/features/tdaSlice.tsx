@@ -1,4 +1,4 @@
-import { createAction, createReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk, createReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { connect, send  } from '@giantmachines/redux-websocket';
 import { bindActionCreators, Dispatch } from 'redux';
 
@@ -11,7 +11,8 @@ import SecureStoreVars from '../../vars/SecureStoreVars';
 //import store from '../store';
 
 interface tdaSlice{
-    //socketConnected: boolean
+    socketConnected: boolean
+    socketAuthenticated: boolean
     refreshToken: string
     accessToken: string
     userPrincipals: string
@@ -20,6 +21,8 @@ interface tdaSlice{
 
 
 const initialState = { 
+    socketConnected: false,
+    socketAuthenticated: false,
     refreshToken:'', 
     accessToken:'',
     userPrincipals:''
@@ -29,7 +32,6 @@ export const tdaSlice = createSlice({
     name: 'tda',
     initialState: initialState,
     reducers: {
-        
         setRefreshToken: ( state, action: PayloadAction<string>) => {
             state.refreshToken = action.payload;
         },
@@ -44,21 +46,29 @@ export const tdaSlice = createSlice({
         builder
         .addCase('REDUX_WEBSOCKET::OPEN', (state, action) => {
             console.log('sock open');
-            
+            state.socketConnected = true;
             console.log(action);
         })
         .addCase('REDUX_WEBSOCKET::CLOSED', (state, action) => {
             console.log('sock closed');
-            
+            state.socketConnected = false;
+            state.socketAuthenticated = false;
             console.log(action);
         })       
         .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
-            console.log('sock send');
+            console.log('sock .');
             console.log(`Send Payload ${JSON.stringify(action.payload)}`)
+
+
         })
         .addCase('REDUX_WEBSOCKET::MESSAGE', (state, action) => {
             console.log('sock message');
-            console.log(`Message Payload ${JSON.stringify(action.payload)}`)
+            console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
+            let data = JSON.parse(action.payload.event.data);
+            
+            if (response.service == "ADMIN" && response.content.code == 0){
+                state.socketAuthenticated = true;
+            }
 
             console.log(action);
         })
@@ -112,12 +122,9 @@ export const getAccessFromRefresh = () => {
 
         let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
         var res = await tda.getAccessFromRefreshToken(refToken);
-        console.log(`Access Token${res.access_token}`)
 
-        //dispatch(setRefreshToken(refToken));
-
-        let principalData = await tda.getuserprincipals(res.access_token)
-        dispatch(setUserPrincipalJson(principalData))
+        //let principalData = await tda.getuserprincipals(res.access_token)
+        //dispatch(setUserPrincipalJson(principalData))
         dispatch(setAccessToken(res.access_token));
 
     }
@@ -127,12 +134,27 @@ export const getUserPrincipalData = () => {
     return async(dispatch:Dispatch, getState) => {
         console.log('getUserPrincipalData')
         let resJson = await tda.getuserprincipals(getState().tda.accessToken)
-        console.log(JSON.stringify(resJson))
-
+        //console.log(JSON.stringify(resJson))
         dispatch(setUserPrincipalJson(await resJson))
+        console.log('1.5 async done' + JSON.stringify(resJson))
     }   
 }
 
+export const getAccessToken = createAsyncThunk(
+    'tda/getAccessToken',
+    async(refreshToken:string) => {
+        console.log('getAccessTokenThunk')
+        var res = await tda.getAccessFromRefreshToken(refreshToken);
+        return res.access_token
+    }
+)
+export const getPrincipalData = createAsyncThunk(
+    'tda/getPrincipalData',
+    async(accessToken: string) => {
+        let resJson = await tda.getuserprincipals(accessToken)
+        return resJson        
+    }
+)
 
 function jsonToQueryString(json) {
     return Object.keys(json).map(function(key) {
@@ -194,7 +216,13 @@ export const buildWebSockConnection = () => {
     }
 }
 
+// Selectors
+export const selectRefreshToken = state => state.tda.refreshToken;
+export const selectAccessToken = state => state.tda.accessToken;
 export const selectUserPrincipals = state => state.tda.userPrincipals;
+export const selectSocketConnected = state => state.tda.socketConnected;
+export const selectSocketAuth = state => state.tda.socketAuthenticated;
+
 export const { setRefreshToken, setAccessToken, setUserPrincipalJson } = tdaSlice.actions
 export const selectAuth = ( state: RootState ) => state.auth
 export default tdaSlice.reducer;

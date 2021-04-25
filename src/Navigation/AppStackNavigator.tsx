@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { RootState } from '../Redux/rootReducer';
-import { getRefreshFromStorage, clearTokens } from '../Redux/features/tdaSlice'
+import { selectRefreshToken, selectSocketAuth } from '../Redux/features/tdaSlice'
 
 import DeAuthTestScreen from '../Screens/DeAuthTestScreen';
 import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
@@ -22,13 +22,13 @@ export default function AppStackNavigator(){
     //dispatch(clearTokens());
 
 
-    const access = useSelector( (state: RootState) => state.tda.accessToken )
-    const refresh = useSelector( (state: RootState) => state.tda.refreshToken )
+    const sockAuth = useSelector( selectSocketAuth )
+    const refresh = useSelector( selectRefreshToken )
     return (
         <Stack.Navigator headerMode="none">
             {
                 (refresh != null) ? (
-                    access ? (
+                    sockAuth ? (
                         <Stack.Screen
                         name="App"
                         component={DeAuthTestScreen}

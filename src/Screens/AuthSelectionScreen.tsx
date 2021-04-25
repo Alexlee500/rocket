@@ -15,7 +15,7 @@ import { RootState } from '../Redux/rootReducer';
 
 //const Stack = createStackNavigator();
 
-export default function AuthSelectionScreen(){
+export default function AuthSelectionScreen({navigation: {navigate}}){
     
     const dispatch = useDispatch();
 
@@ -26,10 +26,16 @@ export default function AuthSelectionScreen(){
             <Button
                 title="DEBUG:CLEAR TOKENS"
                 onPress={() => dispatch(clearTokens())}
-            />  
+            />
+
             <Button
                 title="Authenticate Using Biometrics"
                 onPress={() => dispatch(promptBio())}
+            />
+
+            <Button
+                title="Authenticate Using Pin"
+                onPress={() =>navigate('Pin')}
             />  
             
         </View>      

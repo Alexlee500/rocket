@@ -1,39 +1,22 @@
 import React, {useState} from 'react';
 import { Text, View, Button } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as LocalAuthentication from 'expo-local-authentication';
-
-import { useDispatch, useSelector } from 'react-redux';
-import { authenticate } from '../Redux/features/authSlice';
-import { RootState } from '../Redux/rootReducer';
+import { authenticate, promptBio } from '../Redux/features/authSlice';
+import { useDispatch } from 'react-redux';
 
 
-export interface IProps {
-    biometricsEnabled?: boolean
-}
 
-export default function PinScreen(props:IProps){
+export default function PinScreen(){
+
     const dispatch = useDispatch();
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Pin Screen</Text>
-
-
-
-            <Button
-                onPress={() => dispatch(authenticate())}
-                title="Auth"
-            />  
-
             
+            <Button
+                title="Authenticate Using Biometrics"
+                onPress={() => dispatch(promptBio())}
+            />
         </View>   
     )
-}
-
-async function promptBiometricAuthorize(){
-    
-    const res = await LocalAuthentication.authenticateAsync({promptMessage: 'Unlock', cancelLabel: 'cancel', disableDeviceFallback: true})
-    return res;
 }

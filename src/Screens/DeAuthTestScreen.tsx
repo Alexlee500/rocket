@@ -22,7 +22,7 @@ export default function DeAuthTestScreen(){
         //console.log('principals')
         //console.log(PrincipalData)
 
-        authSock()
+        //authSock()
     }, [])
 
     console.log('DeAuthTestScreen')
