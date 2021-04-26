@@ -3,7 +3,6 @@ import * as SecureStore from 'expo-secure-store';
 
 import AmeritradeConf from '../configs/AmeritradeConf'
 import SecureStoreVars from '../vars/SecureStoreVars';
-import { acc } from 'react-native-reanimated';
 
 
 
@@ -113,9 +112,6 @@ export async function getuserprincipals(accessToken: string) : Promise<any>{
     var resJson = await res.json();
     return resJson;
 }
-
-
-
 
 
 

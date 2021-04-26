@@ -56,7 +56,7 @@ export const tdaSlice = createSlice({
             console.log(action);
         })       
         .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
-            console.log('sock .');
+            console.log('sock send');
             console.log(`Send Payload ${JSON.stringify(action.payload)}`)
 
 
@@ -64,12 +64,14 @@ export const tdaSlice = createSlice({
         .addCase('REDUX_WEBSOCKET::MESSAGE', (state, action) => {
             console.log('sock message');
             console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
-            let data = JSON.parse(action.payload.event.data);
-            
-            if (response.service == "ADMIN" && response.content.code == 0){
-                state.socketAuthenticated = true;
-            }
+            let MessageData = JSON.parse(action.payload.event.data);
 
+            try{
+                let response = MessageData?.response[0];
+                if (response?.service == "ADMIN" && response?.content.code == 0){
+                    state.socketAuthenticated = true;
+                }
+            }catch(error){}
             console.log(action);
         })
     }

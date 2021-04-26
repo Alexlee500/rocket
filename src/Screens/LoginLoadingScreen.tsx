@@ -4,23 +4,18 @@ import * as SecureStore from 'expo-secure-store';
 
 import { useDispatch, useSelector} from 'react-redux';
 import { connect, send  } from '@giantmachines/redux-websocket';
-import { parseISO, startOfYesterday } from 'date-fns'
+import { parseISO } from 'date-fns'
 import SecureStoreVars from '../vars/SecureStoreVars';
 import * as tda from '../api/AmeritradeApi';
-
+import { AuthRequest } from '../api/AmeritradeSockRequests'
 import { selectSocketConnected,selectUserPrincipals, setUserPrincipalJson, setAccessToken, setRefreshToken } from '../Redux/features/tdaSlice'
-import { G } from 'react-native-svg';
 
 
 export default function LoginLoadingScreen() {
     const dispatch = useDispatch();
-    //const AccessToken = useSelector( selectAccessToken )
     var PrincipalData:any = useSelector( selectUserPrincipals )
     const SockConnected = useSelector( selectSocketConnected )
     var PrincipalData: any, refToken: string, AcsToken = null
-
-
-
 
     useEffect(() => {
         const loadData = async () => {
@@ -43,55 +38,9 @@ export default function LoginLoadingScreen() {
     }, [SockConnected])
     
     let authSocket = async (UserPrincipalData) => {
-
-        function jsonToQueryString(json) {
-            return Object.keys(json).map(function(key) {
-                    return encodeURIComponent(key) + '=' +
-                        encodeURIComponent(json[key]);
-                }).join('&');
-        }
-
-        var tokenTimeStampAsDateObj = parseISO(UserPrincipalData.streamerInfo.tokenTimestamp)
-        var tokenTimeStampAsMs = tokenTimeStampAsDateObj.getTime();
-        var credentials = {
-            "userid": UserPrincipalData.accounts[0].accountId,
-            "token": UserPrincipalData.streamerInfo.token,
-            "company": UserPrincipalData.accounts[0].company,
-            "segment": UserPrincipalData.accounts[0].segment,
-            "cddomain": UserPrincipalData.accounts[0].accountCdDomainId,
-            "usergroup": UserPrincipalData.streamerInfo.userGroup,
-            "accesslevel": UserPrincipalData.streamerInfo.accessLevel,
-            "authorized": "Y",
-            "timestamp": tokenTimeStampAsMs,
-            "appid": UserPrincipalData.streamerInfo.appId,
-            "acl": UserPrincipalData.streamerInfo.acl
-        }
-
-        var authRequest = {    
-            "requests": [
-            {
-                "service": "ADMIN",
-                "command": "LOGIN",
-                "requestid": 0,
-                "account": UserPrincipalData.accounts[0].accountId,
-                "source": UserPrincipalData.streamerInfo.appId,
-                "parameters": {
-                    "credential": jsonToQueryString(credentials),
-                    "token": UserPrincipalData.streamerInfo.token,
-                    "version": "1.0"
-                }
-            }
-        ]}
+        var authRequest = AuthRequest(UserPrincipalData);
         dispatch(send(authRequest));
     }
-
-
-
-    
-  
-
-
-
 
     return (
         <View>
