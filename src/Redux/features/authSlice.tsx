@@ -1,5 +1,4 @@
 import {createAsyncThunk, createSlice, Store} from '@reduxjs/toolkit';
-import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { RootState } from '../rootReducer';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Dispatch } from 'redux';

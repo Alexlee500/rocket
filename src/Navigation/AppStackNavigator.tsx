@@ -10,7 +10,7 @@ import { selectRefreshToken, selectSocketAuth, selectLoginLoading } from '../Red
 import DeAuthTestScreen from '../Screens/DeAuthTestScreen';
 import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
 import OauthPromptScreen from '../Screens/OauthPromptScreen';
-
+import AppTabNavigator from './AppTabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -31,7 +31,7 @@ export default function AppStackNavigator(){
                     !loginLoading ? (
                         <Stack.Screen
                         name="App"
-                        component={DeAuthTestScreen}
+                        component={AppTabNavigator}
                         />
                     ) : (
                         <Stack.Screen
