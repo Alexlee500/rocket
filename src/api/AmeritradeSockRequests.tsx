@@ -62,3 +62,34 @@ export const subscribeAccountActivity = (PrincipalData) => {
 
     return subRequest
 }
+
+export const subscribeQuote = ( PrincipalData, quotes ) => {
+    var subRequest = {
+        "requests": [{
+            "service": "QUOTE",
+            "requestid": "2",
+            "command": "SUBS",
+            "account": PrincipalData.accounts[0].accountId,
+            "source": AmeritradeConf.clientId,
+            "parameters": {
+                "keys": quotes,
+                "fields": "0,1,2,3,4,5,6,7,8,29,49"
+            }
+        }]
+    }
+    return subRequest
+}
+
+export const LogoutRequest = ( PrincipalData ) => {
+    var subRequest = {
+        "requests": [{
+            "service": "ADMIN", 
+            "requestid": "1", 
+            "command": "LOGOUT", 
+            "account": PrincipalData.accounts[0].accountId, 
+            "source": AmeritradeConf.clientId, 
+            "parameters": { }
+        }]
+    }
+    return subRequest
+}

@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from 'react';
-import  {Text, View } from 'react-native';
+import  {Text, View, ActivityIndicator } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { useDispatch, useSelector} from 'react-redux';
@@ -7,43 +7,62 @@ import { connect, send  } from '@giantmachines/redux-websocket';
 import { parseISO } from 'date-fns'
 import SecureStoreVars from '../vars/SecureStoreVars';
 import * as tda from '../api/AmeritradeApi';
-import { AuthRequest } from '../api/AmeritradeSockRequests'
-import { selectSocketConnected,selectUserPrincipals, setUserPrincipalJson, setAccessToken, setRefreshToken } from '../Redux/features/tdaSlice'
+import { AuthRequest,
+         subscribeQuote,
+         subscribeAccountActivity 
+        } from '../api/AmeritradeSockRequests'
+
+import { selectSocketConnected, 
+        selectUserPrincipals, 
+        setUserPrincipalJson, 
+        selectSocketAuth, 
+        selectLoginLoading,
+        setLoginLoading 
+        } from '../Redux/features/tdaSlice'
 
 
 export default function LoginLoadingScreen() {
     const dispatch = useDispatch();
-    var PrincipalData:any = useSelector( selectUserPrincipals )
-    const SockConnected = useSelector( selectSocketConnected )
-    var PrincipalData: any, refToken: string, AcsToken = null
+    const LoginLoading: boolean = useSelector( selectLoginLoading )
+    const SockAuth:boolean = useSelector( selectSocketAuth )
+    const PrincipalData:any = useSelector( selectUserPrincipals )
+    const SockConnected:boolean = useSelector( selectSocketConnected )
+    
+    var refToken:string, AcsToken:string = null
 
     useEffect(() => {
         const loadData = async () => {
-            
             refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
             AcsToken = await tda.getAccessFromRefreshToken(await refToken);
-            PrincipalData = await tda.getuserprincipals(await AcsToken.access_token);
-            dispatch(setUserPrincipalJson(PrincipalData));
-            dispatch(connect(`wss://${PrincipalData.streamerInfo.streamerSocketUrl}/ws`))
+            let pd = await tda.getuserprincipals(await AcsToken.access_token);
+            dispatch(setUserPrincipalJson(pd));
+            dispatch(connect(`wss://${pd.streamerInfo.streamerSocketUrl}/ws`))
         }
         loadData()
     }, [])
 
 
     useEffect(() => {
-        console.log(SockConnected);
         if (SockConnected){
-            authSocket(PrincipalData);
+            var authRequest = AuthRequest(PrincipalData);
+            dispatch(send(authRequest));        
         }
     }, [SockConnected])
-    
-    let authSocket = async (UserPrincipalData) => {
-        var authRequest = AuthRequest(UserPrincipalData);
-        dispatch(send(authRequest));
-    }
 
+
+    useEffect(() => {
+        if(SockAuth){
+            var accActivity = subscribeAccountActivity(PrincipalData);
+            dispatch(send(accActivity))
+            dispatch(setLoginLoading(false))
+        }
+    }, [SockAuth])
+    
+
+    
     return (
         <View>
+            <ActivityIndicator size="large" />
             <Text>LOADING</Text>
         </View>
     )
