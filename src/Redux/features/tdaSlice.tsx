@@ -34,6 +34,14 @@ export const tdaSlice = createSlice({
     name: 'tda',
     initialState: initialState,
     reducers: {
+        resetConnections: ( state ) => {
+            state.socketConnected = initialState.socketConnected;
+            state.socketAuthenticated = initialState.socketAuthenticated;
+            state.loginLoading = initialState.loginLoading;
+            state.accessToken = initialState.accessToken;
+            state.refreshToken = initialState.refreshToken;
+            state.userPrincipals = initialState.userPrincipals;
+        },
         setRefreshToken: ( state, action: PayloadAction<string>) => {
             state.refreshToken = action.payload;
         },
@@ -56,9 +64,10 @@ export const tdaSlice = createSlice({
         })
         .addCase('REDUX_WEBSOCKET::CLOSED', (state, action) => {
             console.log('sock closed');
-            state.socketConnected = initialState.socketConnected;
+            //state.loginLoading = initialState.loginLoading;
             state.socketAuthenticated = initialState.socketAuthenticated;
-            state.loginLoading = initialState.loginLoading;
+            state.socketConnected = initialState.socketConnected;
+
             console.log(action);
         })       
         .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
@@ -74,7 +83,7 @@ export const tdaSlice = createSlice({
 
             try{
                 let response = MessageData?.response[0];
-                if (response?.service == "ADMIN" && response?.content.code == 0){
+                if (response?.service == "ADMIN" && response?.command == "LOGIN" && response?.content.code == 0){
                     state.socketAuthenticated = true;
                 }
             }catch(error){}
@@ -169,6 +178,6 @@ export const selectUserPrincipals = state => state.tda.userPrincipals;
 export const selectSocketConnected = state => state.tda.socketConnected;
 export const selectSocketAuth = state => state.tda.socketAuthenticated;
 
-export const { setRefreshToken, setAccessToken, setUserPrincipalJson, setLoginLoading } = tdaSlice.actions
+export const { setRefreshToken, setAccessToken, setUserPrincipalJson, setLoginLoading, resetConnections } = tdaSlice.actions
 export const selectAuth = ( state: RootState ) => state.auth
 export default tdaSlice.reducer;
