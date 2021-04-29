@@ -3,7 +3,7 @@ import { parseISO } from 'date-fns'
 import AmeritradeConf from '../configs/AmeritradeConf'
 
 
-export const AuthRequest = (PrincipalData) => {
+export const AuthRequest = (PrincipalData:UserPrincipals) => {
     function jsonToQueryString(json) {
         return Object.keys(json).map(function(key) {
                 return encodeURIComponent(key) + '=' +
@@ -45,7 +45,7 @@ export const AuthRequest = (PrincipalData) => {
     return authRequest;
 }
 
-export const subscribeAccountActivity = (PrincipalData) => {
+export const subscribeAccountActivity = (PrincipalData:UserPrincipals) => {
     var subRequest = {
         "requests":[{
             "service": "ACCT_ACTIVITY", 
@@ -63,7 +63,7 @@ export const subscribeAccountActivity = (PrincipalData) => {
     return subRequest
 }
 
-export const subscribeQuote = ( PrincipalData, quotes ) => {
+export const subscribeQuote = ( PrincipalData:UserPrincipals, quotes ) => {
     var subRequest = {
         "requests": [{
             "service": "QUOTE",
@@ -80,7 +80,7 @@ export const subscribeQuote = ( PrincipalData, quotes ) => {
     return subRequest
 }
 
-export const LogoutRequest = ( PrincipalData ) => {
+export const LogoutRequest = ( PrincipalData:UserPrincipals ) => {
     var subRequest = {
         "requests": [{
             "service": "ADMIN", 

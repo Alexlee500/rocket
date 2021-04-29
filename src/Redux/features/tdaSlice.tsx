@@ -16,7 +16,7 @@ interface tdaSlice{
     socketAuthenticated: boolean
     refreshToken: string
     accessToken: string
-    userPrincipals: string
+    userPrincipals: UserPrincipals
 }
 
 
@@ -27,7 +27,7 @@ const initialState = {
     socketAuthenticated: false,
     refreshToken:'', 
     accessToken:'',
-    userPrincipals:''
+    userPrincipals: null
 }
 
 export const tdaSlice = createSlice({
@@ -48,7 +48,7 @@ export const tdaSlice = createSlice({
         setAccessToken: ( state, action: PayloadAction<string>) => {
             state.accessToken = action.payload;
         },
-        setUserPrincipalJson:(state, action: PayloadAction<string>) => {
+        setUserPrincipalJson:(state, action: PayloadAction<UserPrincipals>) => {
             state.userPrincipals = action.payload;
         },
         setLoginLoading:(state, action: PayloadAction<boolean>) => {

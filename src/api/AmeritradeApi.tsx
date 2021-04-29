@@ -6,7 +6,7 @@ import SecureStoreVars from '../vars/SecureStoreVars';
 
 
 
-export async function oauthApiLogin() : Promise<any> {
+export async function oauthApiLogin() : Promise<AccessToken> {
     console.log('tda login');
     var encodedUri:string = encodeURIComponent(AmeritradeConf.redirectUrl);
     var encodedClientId:string = encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
@@ -39,9 +39,8 @@ export async function oauthApiLogin() : Promise<any> {
 }
 
 
-
 // API call to get Access token and Refresh Token from Auth Code
-async function getTokensFromAuthCode(authCode:string) : Promise<JSON> {
+async function getTokensFromAuthCode(authCode:string) : Promise<AccessToken> {
     console.log('getTokensFromAuthCode')
 
     var postBody:string =  "grant_type=authorization_code";
@@ -50,27 +49,6 @@ async function getTokensFromAuthCode(authCode:string) : Promise<JSON> {
     postBody += "&code=" + encodeURIComponent(authCode);
     postBody += "&client_id=" + encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
     postBody += "&redirect_uri=" + encodeURIComponent(AmeritradeConf.redirectUrl);
-
-    /*
-    fetch(AmeritradeConf.tokenEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },  
-        body: postBody
-    })
-    .then(response => response.json())
-    .then((responseJson)=>{
-        console.log(responseJson)
-        //console.log(`Access Token: ${responseJson.access_token}`);
-        //console.log(`Refresh Token: ${responseJson.refresh_token}`);
-
-        //SecureStore.setItemAsync(SecureStoreVars.AccessToken, responseJson.access_token);
-        //SecureStore.setItemAsync(SecureStoreVars.RefreshToken, responseJson.refresh_token);
-        console.log(`get tokens done with ${responseJson}`)
-        return responseJson;
-    })
-    */
 
     const res = await fetch(AmeritradeConf.tokenEndpoint, {
                             method: 'POST',
@@ -82,7 +60,8 @@ async function getTokensFromAuthCode(authCode:string) : Promise<JSON> {
     return await res.json();
 }
 
-export async function getAccessFromRefreshToken(refreshToken:string) : Promise<any>{
+
+export async function getAccessFromRefreshToken(refreshToken:string) : Promise<AccessToken>{
 
     var postBody:string =  "grant_type=refresh_token";
     postBody += "&refresh_token=" + encodeURIComponent(refreshToken);
@@ -101,7 +80,7 @@ export async function getAccessFromRefreshToken(refreshToken:string) : Promise<a
     return await res.json();
 }
 
-export async function getuserprincipals(accessToken: string) : Promise<any>{
+export async function getuserprincipals(accessToken: string) : Promise<UserPrincipals>{
     console.log(`getuserprincipals ${accessToken}`);
     const resourceUrl = "https://api.tdameritrade.com/v1/userprincipals?fields=streamerSubscriptionKeys%2CstreamerConnectionInfo";
     var res = await fetch(resourceUrl, {
@@ -114,4 +93,13 @@ export async function getuserprincipals(accessToken: string) : Promise<any>{
 }
 
 
-
+export async function getWatchlistsForAccount( accessToken: string, accountId: string ) : Promise<Watchlist>{
+    const resourceUrl = `https://api.tdameritrade.com/v1/accounts/${accountId}/watchlists`;
+    var res = await fetch(resourceUrl, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    var resJson = await res.json();
+    return resJson
+}

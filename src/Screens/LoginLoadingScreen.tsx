@@ -28,7 +28,7 @@ export default function LoginLoadingScreen() {
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const SockConnected:boolean = useSelector( selectSocketConnected )
     
-    var refToken:string, AcsToken:string = null
+    var refToken:string, AcsToken:AccessToken = null
 
     useEffect(() => {
         const loadData = async () => {
@@ -62,7 +62,7 @@ export default function LoginLoadingScreen() {
     
     return (
         <View>
-            <ActivityIndicator size="large" />
+            <ActivityIndicator size="large" color="#0000ff" />
             <Text>LOADING</Text>
         </View>
     )
