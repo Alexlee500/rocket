@@ -17,6 +17,7 @@ interface tdaSlice{
     refreshToken: string
     accessToken: string
     userPrincipals: UserPrincipals
+    watchlistData: Watchlist
 }
 
 
@@ -27,7 +28,8 @@ const initialState = {
     socketAuthenticated: false,
     refreshToken:'', 
     accessToken:'',
-    userPrincipals: null
+    userPrincipals: null,
+    watchlistData: null
 }
 
 export const tdaSlice = createSlice({
@@ -53,7 +55,11 @@ export const tdaSlice = createSlice({
         },
         setLoginLoading:(state, action: PayloadAction<boolean>) => {
             state.loginLoading = action.payload;
+        },
+        setWatchlistData:(state, action: PayloadAction<Watchlist>) => {
+            state.watchlistData = action.payload
         }
+
     },
     extraReducers:(builder) => {
         builder
@@ -177,7 +183,13 @@ export const selectAccessToken = state => state.tda.accessToken;
 export const selectUserPrincipals = state => state.tda.userPrincipals;
 export const selectSocketConnected = state => state.tda.socketConnected;
 export const selectSocketAuth = state => state.tda.socketAuthenticated;
+export const selectWatchlist = state => state.tda.watchlistData;
+export const {  setRefreshToken, 
+                setAccessToken, 
+                setUserPrincipalJson, 
+                setLoginLoading, 
+                resetConnections, 
+                setWatchlistData 
+            } = tdaSlice.actions
 
-export const { setRefreshToken, setAccessToken, setUserPrincipalJson, setLoginLoading, resetConnections } = tdaSlice.actions
-export const selectAuth = ( state: RootState ) => state.auth
 export default tdaSlice.reducer;

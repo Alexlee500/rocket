@@ -9,7 +9,7 @@ import SecureStoreVars from '../vars/SecureStoreVars';
 import * as tda from '../api/AmeritradeApi';
 import { AuthRequest,
          subscribeQuote,
-         subscribeAccountActivity 
+         subscribeAccountActivity
         } from '../api/AmeritradeSockRequests'
 
 import { selectSocketConnected, 
@@ -17,7 +17,8 @@ import { selectSocketConnected,
         setUserPrincipalJson, 
         selectSocketAuth, 
         selectLoginLoading,
-        setLoginLoading 
+        setLoginLoading,
+        setWatchlistData
         } from '../Redux/features/tdaSlice'
 
 
@@ -36,6 +37,10 @@ export default function LoginLoadingScreen() {
             AcsToken = await tda.getAccessFromRefreshToken(await refToken);
             let pd = await tda.getuserprincipals(await AcsToken.access_token);
             dispatch(setUserPrincipalJson(pd));
+
+            var watchlistData = await tda.getWatchlistsForAccount(AcsToken.access_token, pd.accounts[0].accountId)
+            dispatch(setWatchlistData(watchlistData))
+            
             dispatch(connect(`wss://${pd.streamerInfo.streamerSocketUrl}/ws`))
         }
         loadData()

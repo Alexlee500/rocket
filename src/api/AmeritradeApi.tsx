@@ -100,6 +100,6 @@ export async function getWatchlistsForAccount( accessToken: string, accountId: s
             'Authorization': 'Bearer ' + accessToken
         }
     })
-    var resJson = await res.json();
+    var resJson:Watchlist = await res.json();
     return resJson
 }
