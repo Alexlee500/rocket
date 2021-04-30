@@ -18,7 +18,8 @@ import { selectSocketConnected,
         selectSocketAuth, 
         selectLoginLoading,
         setLoginLoading,
-        setWatchlistData
+        setWatchlistData,
+        selectWatchlist
         } from '../Redux/features/tdaSlice'
 
 
@@ -28,9 +29,9 @@ export default function LoginLoadingScreen() {
     const SockAuth:boolean = useSelector( selectSocketAuth )
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const SockConnected:boolean = useSelector( selectSocketConnected )
-    
-    var refToken:string, AcsToken:AccessToken = null
+    const watchlistData:Watchlists = useSelector( selectWatchlist )
 
+    var refToken:string, AcsToken:AccessToken = null
     useEffect(() => {
         const loadData = async () => {
             refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
@@ -38,8 +39,8 @@ export default function LoginLoadingScreen() {
             let pd = await tda.getuserprincipals(await AcsToken.access_token);
             dispatch(setUserPrincipalJson(pd));
 
-            var watchlistData = await tda.getWatchlistsForAccount(AcsToken.access_token, pd.accounts[0].accountId)
-            dispatch(setWatchlistData(watchlistData))
+            var wl = await tda.getWatchlistsForAccount(AcsToken.access_token, pd.accounts[0].accountId)
+            dispatch(setWatchlistData(wl))
             
             dispatch(connect(`wss://${pd.streamerInfo.streamerSocketUrl}/ws`))
         }
@@ -59,6 +60,21 @@ export default function LoginLoadingScreen() {
         if(SockAuth){
             var accActivity = subscribeAccountActivity(PrincipalData);
             dispatch(send(accActivity))
+
+
+            let subscribeSymbolList = [];
+            for (let i in watchlistData){
+                let wlist = watchlistData[i];
+                for (let j in wlist.watchlistItems){
+                    let inst = wlist.watchlistItems[j]
+                    console.log(inst.instrument.symbol)
+                    subscribeSymbolList.push(inst.instrument.symbol)
+                }
+            }
+
+
+            var subRequestQuotes = subscribeQuote(PrincipalData, subscribeSymbolList.toString())
+            dispatch(send(subRequestQuotes))
             dispatch(setLoginLoading(false))
         }
     }, [SockAuth])

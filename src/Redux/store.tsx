@@ -7,7 +7,7 @@ import rootReducer from './rootReducer'
  
 
 
-const reduxWebsocketMiddleware  = reduxWebsocket();
+const reduxWebsocketMiddleware  = reduxWebsocket({reconnectOnClose:false});
 let store =  configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck:false}).concat(reduxWebsocketMiddleware)

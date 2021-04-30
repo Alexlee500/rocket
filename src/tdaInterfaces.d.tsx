@@ -81,7 +81,7 @@ declare interface UserPrincipals {
     }
 }
 
-declare interface Watchlist {
+declare interface Watchlists {
     name: string,
     watchlistId: string,
     accountId: string,
@@ -102,4 +102,8 @@ declare interface Instrument{
     symbol: string,
     description: string,
     assetType: string
+}
+
+declare interface SecuritiesAccount{
+    
 }

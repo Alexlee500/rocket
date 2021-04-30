@@ -8,7 +8,7 @@ import { selectWatchlist } from '../Redux/features/tdaSlice';
 
 export default function WatchlistScreen() {
 
-    const watchlist:Watchlist = useSelector( selectWatchlist )
+    const watchlist:Watchlists = useSelector( selectWatchlist )
     console.log(watchlist)
     return(
         <View>

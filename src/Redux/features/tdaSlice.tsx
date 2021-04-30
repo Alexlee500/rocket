@@ -1,14 +1,22 @@
-import { createAction, createAsyncThunk, createReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { connect, send  } from '@giantmachines/redux-websocket';
-import { bindActionCreators, Dispatch } from 'redux';
+import { createAction, Action, createAsyncThunk, createReducer, createSlice, PayloadAction, AnyAction } from '@reduxjs/toolkit';
+
+import {
+    REDUX_WEBSOCKET_BROKEN,
+    REDUX_WEBSOCKET_CLOSED,
+    REDUX_WEBSOCKET_CONNECT,
+    REDUX_WEBSOCKET_MESSAGE,
+    REDUX_WEBSOCKET_OPEN,
+    REDUX_WEBSOCKET_SEND,
+    WebsocketMessage,
+    WebsocketSend
+  } from './actionTypes';
+  
+  import { bindActionCreators, Dispatch } from 'redux';
 
 import { RootState } from '../rootReducer';
 import * as SecureStore from 'expo-secure-store';
 import * as tda from '../../api/AmeritradeApi';
 import SecureStoreVars from '../../vars/SecureStoreVars';
-
-//import { connect } from '../middleware/WebsockMiddleware'
-//import store from '../store';
 
 interface tdaSlice{
     loginLoading: boolean
@@ -21,7 +29,6 @@ interface tdaSlice{
 }
 
 
-
 const initialState = { 
     loginLoading: true,
     socketConnected: false,
@@ -31,6 +38,8 @@ const initialState = {
     userPrincipals: null,
     watchlistData: null
 }
+
+
 
 export const tdaSlice = createSlice({
     name: 'tda',
@@ -56,19 +65,19 @@ export const tdaSlice = createSlice({
         setLoginLoading:(state, action: PayloadAction<boolean>) => {
             state.loginLoading = action.payload;
         },
-        setWatchlistData:(state, action: PayloadAction<Watchlist>) => {
+        setWatchlistData:(state, action: PayloadAction<Watchlists>) => {
             state.watchlistData = action.payload
         }
 
     },
     extraReducers:(builder) => {
         builder
-        .addCase('REDUX_WEBSOCKET::OPEN', (state, action) => {
+        .addCase(REDUX_WEBSOCKET_OPEN, (state, action) => {
             console.log('sock open');
             state.socketConnected = true;
             console.log(action);
         })
-        .addCase('REDUX_WEBSOCKET::CLOSED', (state, action) => {
+        .addCase(REDUX_WEBSOCKET_CLOSED, (state, action) => {
             console.log('sock closed');
             //state.loginLoading = initialState.loginLoading;
             state.socketAuthenticated = initialState.socketAuthenticated;
@@ -76,14 +85,17 @@ export const tdaSlice = createSlice({
 
             console.log(action);
         })       
-        .addCase('REDUX_WEBSOCKET::SEND', (state, action) => {
+        .addCase(REDUX_WEBSOCKET_SEND, (state, action:WebsocketSend) => {
             console.log('sock send');
+            console.log(`Send ${JSON.stringify(action)}`)
+
             console.log(`Send Payload ${JSON.stringify(action.payload)}`)
 
 
         })
-        .addCase('REDUX_WEBSOCKET::MESSAGE', (state, action) => {
+        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
             console.log('sock message');
+            console.log(JSON.stringify(action.payload))
             console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
             let MessageData = JSON.parse(action.payload.event.data);
 
