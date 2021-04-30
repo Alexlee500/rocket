@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import  {Text, View, Button } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,13 +6,31 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { selectWatchlist } from '../Redux/features/tdaSlice';
 
-export default function WatchlistScreen() {
 
-    const watchlist:Watchlists = useSelector( selectWatchlist )
-    console.log(watchlist)
+
+export default function WatchlistScreen() {
+    const [selectedWatchlist, setSelectedWatchlist] = useState();
+
+    const watchlists:Watchlists = useSelector( selectWatchlist )
+    let myLists = watchlists.map((myValue, myIndex) => {
+        return (
+            <Picker.Item label={myValue.name} value={myIndex} key={myIndex}/>
+        )
+    })
+
+    console.log(watchlists)
     return(
         <View>
-            <Text>Watchlist</Text>
+            <Picker
+                selectedValue={selectedWatchlist}
+                onValueChange={(itemValue, itemIndex) =>
+                setSelectedWatchlist(itemValue)}
+                mode="dropdown"
+                >
+                {myLists}
+            </Picker>
+            <Text>{JSON.stringify(watchlists[selectedWatchlist])}</Text>
+            
         </View>
     )
 }

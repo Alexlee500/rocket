@@ -67,7 +67,6 @@ export default function LoginLoadingScreen() {
                 let wlist = watchlistData[i];
                 for (let j in wlist.watchlistItems){
                     let inst = wlist.watchlistItems[j]
-                    console.log(inst.instrument.symbol)
                     subscribeSymbolList.push(inst.instrument.symbol)
                 }
             }
