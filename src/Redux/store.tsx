@@ -1,17 +1,23 @@
-import io from 'socket.io-client';
 import reduxWebsocket from '@giantmachines/redux-websocket';
 
-import { configureStore, getDefaultMiddleware, MiddlewareArray } from '@reduxjs/toolkit'
+import { configureStore, getDefaultMiddleware, MiddlewareArray, combineReducers } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
 import rootReducer from './rootReducer'
+import authReducer from './features/authSlice'
+import tdaReducer from './features/tdaSlice'
+import quoteReducer from './features/quoteSlice'
  
-
+/*
+const rootReducer = combineReducers({
+    auth: authReducer,
+    tda: tdaReducer,
+    quote: quoteReducer
+})*/
 
 const reduxWebsocketMiddleware  = reduxWebsocket({reconnectOnClose:false});
 let store =  configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck:false}).concat(reduxWebsocketMiddleware)
-
 })
 
 export type AppDispatch = typeof store.dispatch

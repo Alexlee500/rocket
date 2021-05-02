@@ -1,4 +1,5 @@
 import { createAction, Action, createAsyncThunk, createReducer, createSlice, PayloadAction, AnyAction, createEntityAdapter } from '@reduxjs/toolkit';
+import { RootState } from '../store'
 
 import {
     REDUX_WEBSOCKET_BROKEN,
@@ -12,7 +13,7 @@ import {
   } from './actionTypes';
 
 type Quote = {
-    "Key": string,
+    "key": string,
     "1": number, 
     "2": number,
     "3": number,
@@ -53,6 +54,11 @@ const quoteSlice = createSlice({
         })
     }
 })
+
+
+export const quoteSelector = quoteAdapter.getSelectors<RootState>(
+    (state) => state.quote
+)
 
 export const {
     quoteAdded, 
