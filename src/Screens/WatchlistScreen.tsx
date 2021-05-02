@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import  {Text, View, Button, FlatList, SafeAreaView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem } from "react-native-elements"
+import { ListItem } from "react-native-elements"
 
 import { selectWatchlist } from '../Redux/features/tdaSlice';
 
@@ -40,8 +40,12 @@ export default function WatchlistScreen() {
                 data={watchlists[selectedWatchlist]?.watchlistItems}
                 keyExtractor={item => item.instrument.symbol}
                 renderItem={({item}) => (
-                    <Text>{item.instrument.symbol} {(allEntities?.[item.instrument.symbol]?.['1'] || '-')}</Text>
-
+                    <ListItem key={item.instrument.symbol} bottomDivider>
+                        <ListItem.Content>
+                            <ListItem.Title>{item.instrument.symbol}          {allEntities?.[item.instrument.symbol]?.['29'] || '0.00'}%</ListItem.Title>
+                            <ListItem.Subtitle>${allEntities?.[item.instrument.symbol]?.['49'] || '-'}</ListItem.Subtitle>
+                        </ListItem.Content>
+                    </ListItem>
                 )}
             />
             
