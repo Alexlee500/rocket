@@ -1,4 +1,4 @@
-import { createAction, Action, createAsyncThunk, createReducer, createSlice, PayloadAction, AnyAction } from '@reduxjs/toolkit';
+import { createAction, Action, createAsyncThunk, createReducer, createSlice, PayloadAction, AnyAction, createEntityAdapter } from '@reduxjs/toolkit';
 
 import {
     REDUX_WEBSOCKET_BROKEN,
@@ -25,8 +25,10 @@ interface tdaSlice{
     refreshToken: string
     accessToken: string
     userPrincipals: UserPrincipals
-    watchlistData: Watchlist
+    watchlistData: Watchlists
 }
+
+const quoteAdapter = createEntityAdapter({})
 
 
 const initialState = { 
@@ -36,7 +38,7 @@ const initialState = {
     refreshToken:'', 
     accessToken:'',
     userPrincipals: null,
-    watchlistData: null
+    watchlistData: null, 
 }
 
 
@@ -68,7 +70,6 @@ export const tdaSlice = createSlice({
         setWatchlistData:(state, action: PayloadAction<Watchlists>) => {
             state.watchlistData = action.payload
         }
-
     },
     extraReducers:(builder) => {
         builder
@@ -95,8 +96,8 @@ export const tdaSlice = createSlice({
         })
         .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
             console.log('sock message');
-            console.log(JSON.stringify(action.payload))
-            console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
+            //console.log(JSON.stringify(action.payload))
+            //console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
             let MessageData = JSON.parse(action.payload.event.data);
 
             try{
@@ -105,7 +106,7 @@ export const tdaSlice = createSlice({
                     state.socketAuthenticated = true;
                 }
             }catch(error){}
-            console.log(action);
+            //console.log(action);
         })
     }
 
