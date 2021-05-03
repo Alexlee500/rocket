@@ -18,7 +18,7 @@ export default function WatchlistScreen() {
 
 
     const allEntities = useSelector(quoteSelector.selectEntities);
-    const watchlists:Watchlists = useSelector( selectWatchlist )
+    const watchlists:Watchlists[] = useSelector( selectWatchlist )
 
     useEffect(() => {
         console.log(`selectEnts ${JSON.stringify(allEntities)}`)
@@ -36,7 +36,7 @@ export default function WatchlistScreen() {
         )
     })
 
-    let watchlistDatatableItem = watchlists[selectedWatchlist]?.watchlistItems.map((item, myIndex)=> {
+    let watchlistDatatableItem = watchlists[selectedWatchlist]?.watchlistItems.map((item)=> {
         return (    
             <DataTable.Row key={item.instrument.symbol}>
                 <DataTable.Cell>{item.instrument.symbol}</DataTable.Cell>

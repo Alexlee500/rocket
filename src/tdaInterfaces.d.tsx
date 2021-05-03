@@ -86,17 +86,18 @@ declare interface Watchlists {
     watchlistId: string,
     accountId: string,
     status: string,
-    watchlistItems: {
-        sequenceId: number,
-        quantity: number,
-        averagePrice: number,
-        commission: number,
-        purchasedDate: Date,
-        instrument: Instrument,
-        status: string
-    }
+    watchlistItems: watchlistItem[]
 }
 
+declare interface watchlistItem {
+    sequenceId: number,
+    quantity: number,
+    averagePrice: number,
+    commission: number,
+    purchasedDate: Date,
+    instrument: Instrument,
+    status: string
+}
 
 declare interface Instrument{
     symbol: string,
