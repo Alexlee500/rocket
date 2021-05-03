@@ -25,7 +25,6 @@ export default function AccountScreen() {
 
     return(
         <View>
-
             <Text>Account</Text>
             <Button
                 title="Log Out"
