@@ -44,9 +44,9 @@ const quoteSlice = createSlice({
             let MessageData = JSON.parse(action.payload.event.data);
             try{
                 let response = MessageData?.data[0]
-                console.log(`msg response for quote ${JSON.stringify(response)}`)
+                //console.log(`msg response for quote ${JSON.stringify(response)}`)
                 if (response?.service == "QUOTE" ){
-                    console.log(`Upsert Many ${response.content}`)
+                    //console.log(`Upsert Many ${response.content}`)
                     quoteAdapter.upsertMany(state, response.content);
                 }
             }catch{

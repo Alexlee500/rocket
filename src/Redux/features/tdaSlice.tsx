@@ -95,7 +95,7 @@ export const tdaSlice = createSlice({
 
         })
         .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
-            console.log('sock message');
+            //console.log('sock message');
             //console.log(JSON.stringify(action.payload))
             //console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
             let MessageData = JSON.parse(action.payload.event.data);
