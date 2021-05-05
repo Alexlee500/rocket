@@ -6,6 +6,12 @@ import { selectWatchlist } from '../Redux/features/tdaSlice';
 
 import { quoteSelector } from '../Redux/features/quoteSlice';
 
+import { quoteFieldMap } from '../api/AmeritradeHelper';
+
+
+
+
+
 export default function WatchlistScreen() {
     const [selectedWatchlist, setSelectedWatchlist] = useState(0);
     const [visible, setVisible] = React.useState(false);
@@ -16,8 +22,6 @@ export default function WatchlistScreen() {
 
     const allEntities = useSelector(quoteSelector.selectEntities);
     const watchlists:Watchlists[] = useSelector( selectWatchlist )
-
-
 
     let watchlistMenuItem = watchlists.map((myValue, myIndex) => {
         return (
@@ -30,9 +34,11 @@ export default function WatchlistScreen() {
         )
     })
 
+
+    
     let watchlistDatatableItem = watchlists[selectedWatchlist]?.watchlistItems.map((item)=> {
 
-        let percentDelta =  (((allEntities?.[item.instrument.symbol]?.['49']-allEntities?.[item.instrument.symbol]?.['15'])/allEntities?.[item.instrument.symbol]?.['15'] ) * 100).toFixed(2)
+        let percentDelta =  (((allEntities?.[item.instrument.symbol]?.[quoteFieldMap.Mark]-allEntities?.[item.instrument.symbol]?.[quoteFieldMap.Close])/allEntities?.[item.instrument.symbol]?.[quoteFieldMap.Mark] ) * 100).toFixed(2)
         
         return (    
             <DataTable.Row key={item.instrument.symbol}>
@@ -42,21 +48,6 @@ export default function WatchlistScreen() {
             </DataTable.Row>
         )
     })
-
-    
-
-    let watchlistListItem = (item) => {
-
-        return (
-
-            <List.Item
-                key={item.instrument.symbol}
-                title={item.instrument.symbol}
-                right={props => <Text>{allEntities?.[item.instrument.symbol]?.['29'] || '+0.00'}</Text>}
-            />
-        )
-    }
-
 
     return(
         <View style={{flex:1, backgroundColor: '#342E38'}}>
