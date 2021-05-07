@@ -130,9 +130,9 @@ export default function WatchlistScreen() {
 
                     anchor={
                         <Appbar.Action 
-                            icon="menu"
-                            style={{backgroundColor:Colors.TextLight}} 
-                            onPress={ () => setVisible(true)} />
+                            icon={'menu' }
+                            onPress={ () => setVisible(true)} 
+                            color={Colors.TextLight}/>
                     }
                     onDismiss={() => setVisible(false)}>
                     {watchlistMenuItem}
