@@ -106,3 +106,4 @@ export async function getWatchlistsForAccount( accessToken: string, accountId: s
     var resJson:Watchlists = await res.json();
     return resJson
 }
+ 

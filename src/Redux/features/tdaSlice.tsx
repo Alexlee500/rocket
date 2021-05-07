@@ -76,7 +76,6 @@ export const tdaSlice = createSlice({
         .addCase(REDUX_WEBSOCKET_OPEN, (state, action) => {
             console.log('sock open');
             state.socketConnected = true;
-            console.log(action);
         })
         .addCase(REDUX_WEBSOCKET_CLOSED, (state, action) => {
             console.log('sock closed');

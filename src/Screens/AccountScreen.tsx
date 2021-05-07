@@ -6,6 +6,7 @@ import { send, disconnect  } from '@giantmachines/redux-websocket';
 import { resetConnections, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
 import { deauthenticate } from '../Redux/features/authSlice';
+import { List } from 'react-native-paper';
 
 export default function AccountScreen() {
     const dispatch = useDispatch();
@@ -21,15 +22,26 @@ export default function AccountScreen() {
         }
         logout();
     }
-
-
+    
     return(
-        <View>
+        <View style={{flex:1,  backgroundColor: '#342E38'}}>
             <Text>Account</Text>
             <Button
                 title="Log Out"
                 onPress={() => onLogout()}
             />
+
+            <List.Section>
+                <List.Accordion
+                    title="Test Stonk aaaaaaaaaaaaaaaaaaaaaaaa11111111"
+                >   
+                <List.Item 
+                    title="First item" 
+                    />
+                <List.Item title="Second item" />
+                </List.Accordion>
+                <List.Item title="test item" />
+            </List.Section>
         </View>
     )
     
