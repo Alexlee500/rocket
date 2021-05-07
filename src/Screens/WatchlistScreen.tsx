@@ -111,7 +111,7 @@ export default function WatchlistScreen() {
             <DataTable.Row key={item}>
             <DataTable.Cell rippleColor={Colors.TextLight}>{item}</DataTable.Cell>
             <DataTable.Cell numeric>${allEntities?.[item]?.[quoteFieldMap.Mark] || '0.00'}</DataTable.Cell>
-            <DataTable.Cell numeric>{percentDelta}%</DataTable.Cell>
+            <DataTable.Cell numeric>{percentDelta>0?"+":""}{percentDelta}%</DataTable.Cell>
             </DataTable.Row>
         )
 
