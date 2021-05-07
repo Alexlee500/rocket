@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import  {View, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Appbar, Menu, DataTable } from 'react-native-paper';
+
+import Colors from '../configs/Colors'
 import { selectWatchlist } from '../Redux/features/tdaSlice';
-
 import { quoteSelector } from '../Redux/features/quoteSlice';
-
 import { quoteFieldMap } from '../api/AmeritradeHelper';
 
 
@@ -19,7 +19,10 @@ export default function WatchlistScreen() {
     const [watchlistSymbols, setWatchlistSymbols] = React.useState([])
 
     useEffect(() => {
+
         const getSelectedWatchlistSymbols = () => {
+            console.log(`getSelectedWatchlistSymbols`)
+
             let symList = watchlists[selectedWatchlist].watchlistItems.map((item) => {
                 return item.instrument.symbol
             })
@@ -57,8 +60,8 @@ export default function WatchlistScreen() {
 
             if (sortConfig.key === 'percentChange'){
                 sortable.sort((a, b) => {
-                    let aDelta =  ((allEntities?.[a]?.[quoteFieldMap.Mark]-allEntities?.[a]?.[quoteFieldMap.Close])/allEntities?.[a]?.[quoteFieldMap.Mark] ) 
-                    let bDelta =  ((allEntities?.[b]?.[quoteFieldMap.Mark]-allEntities?.[b]?.[quoteFieldMap.Close])/allEntities?.[b]?.[quoteFieldMap.Mark] ) 
+                    let aDelta =  ((allEntities?.[a]?.[quoteFieldMap.Mark]-allEntities?.[a]?.[quoteFieldMap.Close])/allEntities?.[a]?.[quoteFieldMap.Mark]) || 0
+                    let bDelta =  ((allEntities?.[b]?.[quoteFieldMap.Mark]-allEntities?.[b]?.[quoteFieldMap.Close])/allEntities?.[b]?.[quoteFieldMap.Mark]) || 0
 
                     if (aDelta < bDelta ){
                         return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -103,29 +106,53 @@ export default function WatchlistScreen() {
 
 
     const watchlistRows = watchlistSymbols.map((item) => {
-        let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2)
+        let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
         return (
             <DataTable.Row key={item}>
-            <DataTable.Cell>{item}</DataTable.Cell>
-            <DataTable.Cell numeric>${allEntities?.[item]?.[quoteFieldMap.Mark] || '$0.00'}</DataTable.Cell>
+            <DataTable.Cell rippleColor={Colors.TextLight}>{item}</DataTable.Cell>
+            <DataTable.Cell numeric>${allEntities?.[item]?.[quoteFieldMap.Mark] || '0.00'}</DataTable.Cell>
             <DataTable.Cell numeric>{percentDelta}%</DataTable.Cell>
             </DataTable.Row>
         )
 
     })
 
-    const WatchlistTable=()=> {
-        return (
+    return (
+        <View style={{flex:1, backgroundColor: Colors.MainDark}}>
+            <Appbar.Header 
+                statusBarHeight={0} 
+                style={{backgroundColor: Colors.MainDark}}>
+                <Menu
+                    visible={visible}
+                    statusBarHeight={0}
+                    style={{backgroundColor: Colors.SecondaryDark}}
+                    contentStyle={{backgroundColor: Colors.SecondaryDark}}
+
+                    anchor={
+                        <Appbar.Action 
+                            icon="menu"
+                            style={{backgroundColor:Colors.TextLight}} 
+                            onPress={ () => setVisible(true)} />
+                    }
+                    onDismiss={() => setVisible(false)}>
+                    {watchlistMenuItem}
+                </Menu>
+                <Appbar.Content 
+                    title={watchlists[selectedWatchlist]?.name} 
+                    subtitle={'Watchlists'} 
+                    color={Colors.TextLight}
+                    />
+            </Appbar.Header>
             <DataTable style={{flex:1}}>
             <DataTable.Header>
             <DataTable.Title
-                    sortDirection={
-                        (sortConfig.key === 'symbol') ? (
-                            sortConfig.direction === 'ascending' ? 'ascending' : 'descending'
-                        ):null }
-                    onPress={
-                        ()=>{ requestSort('symbol')}
-                    }>Symbol</DataTable.Title>
+                sortDirection={
+                    (sortConfig.key === 'symbol') ? (
+                        sortConfig.direction === 'ascending' ? 'ascending' : 'descending'
+                    ):null }
+                onPress={
+                    ()=>{ requestSort('symbol')}
+                }>Symbol</DataTable.Title>
 
             <DataTable.Title numeric
                     sortDirection={
@@ -150,26 +177,6 @@ export default function WatchlistScreen() {
                 {watchlistRows}
             </ScrollView> 
             </DataTable>
-
-        )
-
-    }
-
-    return (
-        <View style={{flex:1, backgroundColor: '#342E38'}}>
-            <Appbar.Header statusBarHeight={0} >
-                <Menu
-                    visible={visible}
-                    statusBarHeight={0}
-                    anchor={
-                        <Appbar.Action icon="menu" onPress={ () => setVisible(true)} />
-                    }
-                    onDismiss={() => setVisible(false)}>
-                    {watchlistMenuItem}
-                </Menu>
-                <Appbar.Content title={watchlists[selectedWatchlist]?.name} subtitle={'Watchlists'} />
-            </Appbar.Header>
-            <WatchlistTable/>
         </View>
     )
 }

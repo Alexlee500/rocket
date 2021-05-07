@@ -11,7 +11,7 @@ import RootNavigationContainer from './Navigation/RootNavigationContainer';
 const App = () => {
     return (
         <Provider store={store}>
-        <PaperProvider theme={DarkTheme}>
+        <PaperProvider>
             <RootNavigationContainer />
         </PaperProvider>
         </Provider>
