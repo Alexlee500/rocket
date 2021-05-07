@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import  {Text, View, Button, FlatList, SafeAreaView, ScrollView } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Appbar, Menu, Divider, List, DataTable } from 'react-native-paper';
+import  {View, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
+import { Appbar, Menu, DataTable } from 'react-native-paper';
 import { selectWatchlist } from '../Redux/features/tdaSlice';
 
 import { quoteSelector } from '../Redux/features/quoteSlice';
@@ -45,10 +45,10 @@ export default function WatchlistScreen() {
 
             if (sortConfig.key === 'mark'){
                 sortable.sort((a, b) => {
-                    if (allEntities[a][quoteFieldMap.Mark] < allEntities[b][quoteFieldMap.Mark] ){
+                    if (allEntities[a]?.[quoteFieldMap.Mark] < allEntities[b]?.[quoteFieldMap.Mark] ){
                         return sortConfig.direction === 'ascending' ? -1 : 1;
                     }
-                    if (allEntities[a][quoteFieldMap.Mark]  > allEntities[b][quoteFieldMap.Mark]){
+                    if (allEntities[a]?.[quoteFieldMap.Mark]  > allEntities[b]?.[quoteFieldMap.Mark]){
                         return sortConfig.direction === 'ascending' ? 1 : -1;
                     }
                 return 0
