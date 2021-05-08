@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import  {View, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Appbar, Menu, DataTable } from 'react-native-paper';
+import { Appbar, Menu } from 'react-native-paper';
+import  DataTable from '../Components/DataTable/DataTable'
 
 import Colors from '../configs/Colors'
 import { selectWatchlist } from '../Redux/features/tdaSlice';
@@ -109,9 +110,11 @@ export default function WatchlistScreen() {
         let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
         return (
             <DataTable.Row key={item}>
-            <DataTable.Cell rippleColor={Colors.TextLight}>{item}</DataTable.Cell>
-            <DataTable.Cell numeric>${allEntities?.[item]?.[quoteFieldMap.Mark] || '0.00'}</DataTable.Cell>
-            <DataTable.Cell numeric>{percentDelta>0?"+":""}{percentDelta}%</DataTable.Cell>
+            <DataTable.Cell >{item}</DataTable.Cell>
+            <DataTable.Cell numeric >
+                ${allEntities?.[item]?.[quoteFieldMap.Mark] || '0.00'}
+            </DataTable.Cell>
+            <DataTable.Cell numeric direction={(percentDelta>0 ? 1 : -1)}>{percentDelta>0?"+":""}{percentDelta}%</DataTable.Cell>
             </DataTable.Row>
         )
 
