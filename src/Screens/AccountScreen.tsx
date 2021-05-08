@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
-import  {Text, View, Button } from 'react-native';
+import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { send, disconnect  } from '@giantmachines/redux-websocket';
 
 import { resetConnections, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
 import { deauthenticate } from '../Redux/features/authSlice';
-import { List } from 'react-native-paper';
+import { Appbar, List, Card, Title, Paragraph} from 'react-native-paper';
+
+
+import Colors from '../configs/Colors'
+import  DataTable from '../Components/DataTable/DataTable'
+
 
 export default function AccountScreen() {
     const dispatch = useDispatch();
@@ -24,24 +29,136 @@ export default function AccountScreen() {
     }
     
     return(
-        <View style={{flex:1,  backgroundColor: '#342E38'}}>
-            <Text>Account</Text>
+        <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
+
+
+            <Appbar.Header
+                statusBarHeight={0} 
+                style={{backgroundColor: Colors.MainDark}}>
+                <Appbar.Content
+                    title='Account'
+                />
+            </Appbar.Header>
+
+        <ScrollView key='scroll1'  stickyHeaderIndices={[2]}>
+            <Card>
+                <Card.Title title="Account Value"/>
+                <Card.Content>
+                    <Title>$100,000,000</Title>
+                    <Paragraph>+1000%</Paragraph>
+                </Card.Content>
+            </Card>
             <Button
                 title="Log Out"
                 onPress={() => onLogout()}
             />
-
-            <List.Section>
-                <List.Accordion
-                    title="Test Stonk aaaaaaaaaaaaaaaaaaaaaaaa11111111"
-                >   
-                <List.Item 
-                    title="First item" 
-                    />
-                <List.Item title="Second item" />
-                </List.Accordion>
-                <List.Item title="test item" />
-            </List.Section>
+            <DataTable >
+                <DataTable.Header style={{backgroundColor:Colors.MainDark}}>
+                    <DataTable.Title>Symbol</DataTable.Title>
+                    <DataTable.Title numeric>Qty</DataTable.Title>
+                    <DataTable.Title numeric>Mark</DataTable.Title>
+                    <DataTable.Title numeric>P&L</DataTable.Title>
+                </DataTable.Header>
+            </DataTable>
+            <DataTable style={{flex:1}}>
+                <DataTable.Row key={1}>
+                    <DataTable.Cell >Test 1</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={2}>
+                    <DataTable.Cell >Test 2</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={3}>
+                    <DataTable.Cell >Test 3</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={4}>
+                    <DataTable.Cell >Test 4</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={5}>
+                    <DataTable.Cell >Test 5</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={6}>
+                    <DataTable.Cell >Test 6</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={7}>
+                    <DataTable.Cell >Test 7</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={8}>
+                    <DataTable.Cell >Test 8</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={9}>
+                    <DataTable.Cell >Test 9</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={10}>
+                    <DataTable.Cell >Test 10</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={11}>
+                    <DataTable.Cell >Test 11</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={12}>
+                    <DataTable.Cell >Test 12</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={13}>
+                    <DataTable.Cell >Test 13</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={14}>
+                    <DataTable.Cell >Test 14</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={15}>
+                    <DataTable.Cell >Test 15</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+                <DataTable.Row key={16}>
+                    <DataTable.Cell >Test 16</DataTable.Cell>
+                    <DataTable.Cell numeric>1</DataTable.Cell>
+                    <DataTable.Cell numeric>2</DataTable.Cell>
+                    <DataTable.Cell numeric>3</DataTable.Cell>
+                </DataTable.Row>
+            </DataTable>
+            </ScrollView>
         </View>
     )
     

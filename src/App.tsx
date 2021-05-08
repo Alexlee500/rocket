@@ -9,10 +9,18 @@ import AuthSelectionScreen from './Screens/AuthSelectionScreen';
 import RootNavigationContainer from './Navigation/RootNavigationContainer';
 import Colors from './configs/Colors'
 
+
+const theme = {
+    ...DarkTheme,
+    colors:{
+        text: Colors.TextLight
+    },
+};
+
 const App = () => {
     return (
         <Provider store={store}>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={ theme }>
             <RootNavigationContainer />
         </PaperProvider>
         </Provider>
@@ -20,11 +28,6 @@ const App = () => {
 }
 
 
-const theme = {
-    ...DarkTheme,
-    colors:{
-        text: Colors.TextLight
-    }
-}
+
 
 export default App;
