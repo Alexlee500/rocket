@@ -7,16 +7,24 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import store from './Redux/store';
 import AuthSelectionScreen from './Screens/AuthSelectionScreen';
 import RootNavigationContainer from './Navigation/RootNavigationContainer';
+import Colors from './configs/Colors'
 
 const App = () => {
     return (
         <Provider store={store}>
-        <PaperProvider>
+        <PaperProvider theme={theme}>
             <RootNavigationContainer />
         </PaperProvider>
         </Provider>
     )
 }
 
+
+const theme = {
+    ...DarkTheme,
+    colors:{
+        text: Colors.TextLight
+    }
+}
 
 export default App;
