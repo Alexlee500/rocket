@@ -13,6 +13,11 @@ import DataTablePagination, {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DataTablePagination as _DataTablePagination,
 } from './DataTablePagination';
+
+import DataTableAccordion, {
+    DataTableAccordion as _DataTableAccordion, 
+} from './DataTableAccordion'
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import DataTableRow, { DataTableRow as _DataTableRow } from './DataTableRow';
 
@@ -93,6 +98,8 @@ DataTable.Cell = DataTableCell;
 
 // @component ./DataTablePagination.tsx
 DataTable.Pagination = DataTablePagination;
+
+DataTable.Accordion = DataTableAccordion;
 
 const styles = StyleSheet.create({
   container: {

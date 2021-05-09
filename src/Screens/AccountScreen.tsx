@@ -40,11 +40,11 @@ export default function AccountScreen() {
                 />
             </Appbar.Header>
 
-        <ScrollView key='scroll1'  stickyHeaderIndices={[2]}>
+        <ScrollView stickyHeaderIndices={[2]}>
             <Card>
                 <Card.Title title="Account Value"/>
                 <Card.Content>
-                    <Title>$100,000,000</Title>
+                    <Title>$69,420.00</Title>
                     <Paragraph>+1000%</Paragraph>
                 </Card.Content>
             </Card>
@@ -61,12 +61,52 @@ export default function AccountScreen() {
                 </DataTable.Header>
             </DataTable>
             <DataTable style={{flex:1}}>
-                <DataTable.Row key={1}>
-                    <DataTable.Cell >Test 1</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                    <DataTable.Cell numeric>3</DataTable.Cell>
-                </DataTable.Row>
+                <DataTable.Accordion 
+                    key={0}
+                    mainRow={                    
+                    <DataTable.Row key={0}>
+                        <DataTable.Cell >Main1</DataTable.Cell>
+                        <DataTable.Cell numeric>1</DataTable.Cell>
+                        <DataTable.Cell numeric>2</DataTable.Cell>
+                        <DataTable.Cell numeric>3</DataTable.Cell>
+                    </DataTable.Row>
+                }>
+                    <DataTable.Row key={0.1}>
+                        <DataTable.Cell >Child 1</DataTable.Cell>
+                        <DataTable.Cell numeric>c1</DataTable.Cell>
+                        <DataTable.Cell numeric>c2</DataTable.Cell>
+                        <DataTable.Cell numeric>c3</DataTable.Cell>
+                    </DataTable.Row>
+                    <DataTable.Row key={0.2}>
+                        <DataTable.Cell >Child 2</DataTable.Cell>
+                        <DataTable.Cell numeric>c1</DataTable.Cell>
+                        <DataTable.Cell numeric>c2</DataTable.Cell>
+                        <DataTable.Cell numeric>c3</DataTable.Cell>
+                    </DataTable.Row>
+                </DataTable.Accordion>
+                <DataTable.Accordion 
+                    key={1}
+                    mainRow={                    
+                    <DataTable.Row key={1.1}>
+                        <DataTable.Cell >Main2</DataTable.Cell>
+                        <DataTable.Cell numeric>1</DataTable.Cell>
+                        <DataTable.Cell numeric>2</DataTable.Cell>
+                        <DataTable.Cell numeric>3</DataTable.Cell>
+                    </DataTable.Row>
+                }>
+                    <DataTable.Row key={1.1}>
+                        <DataTable.Cell >Child 1</DataTable.Cell>
+                        <DataTable.Cell numeric>c1</DataTable.Cell>
+                        <DataTable.Cell numeric>c2</DataTable.Cell>
+                        <DataTable.Cell numeric>c3</DataTable.Cell>
+                    </DataTable.Row>
+                    <DataTable.Row key={1.2}>
+                        <DataTable.Cell >Child 2</DataTable.Cell>
+                        <DataTable.Cell numeric>c1</DataTable.Cell>
+                        <DataTable.Cell numeric>c2</DataTable.Cell>
+                        <DataTable.Cell numeric>c3</DataTable.Cell>
+                    </DataTable.Row>
+                </DataTable.Accordion>
                 <DataTable.Row key={2}>
                     <DataTable.Cell >Test 2</DataTable.Cell>
                     <DataTable.Cell numeric>1</DataTable.Cell>
