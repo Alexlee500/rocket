@@ -64,7 +64,7 @@ export default function AccountScreen() {
                 <DataTable.Accordion 
                     key={0}
                     mainRow={                    
-                    <DataTable.Row key={0}>
+                    <DataTable.Row key={0} >
                         <DataTable.Cell >Main1</DataTable.Cell>
                         <DataTable.Cell numeric>1</DataTable.Cell>
                         <DataTable.Cell numeric>2</DataTable.Cell>
@@ -107,7 +107,7 @@ export default function AccountScreen() {
                         <DataTable.Cell numeric>c3</DataTable.Cell>
                     </DataTable.Row>
                 </DataTable.Accordion>
-                <DataTable.Row key={2}>
+                <DataTable.Row key={2} >
                     <DataTable.Cell >Test 2</DataTable.Cell>
                     <DataTable.Cell numeric>1</DataTable.Cell>
                     <DataTable.Cell numeric>2</DataTable.Cell>

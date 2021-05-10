@@ -17,6 +17,14 @@ type Props = $RemoveChildren<typeof TouchableRipple> & {
    * Content of the `DataTableRow`.
    */
   children: React.ReactNode;
+  left?:(props:{
+    color: string;
+    style:{
+      marginLeft: number;
+      marginRight: number;
+      marginVertical?: number;
+    };
+  }) => React.ReactNode
   /**
    * Function to execute on press.
    */
@@ -62,6 +70,7 @@ type Props = $RemoveChildren<typeof TouchableRipple> & {
 
 const DataTableRow = ({
   onPress,
+  left,
   style,
   theme,
   children,
@@ -72,7 +81,7 @@ const DataTableRow = ({
     .alpha(0.12)
     .rgb()
     .string();
-
+  const descriptionColor = color(theme.colors.text).alpha(0.54).rgb().string();
   return (
     <TouchableRipple
       {...rest}
@@ -80,6 +89,14 @@ const DataTableRow = ({
       style={[styles.container, { borderBottomColor }, style]}
     >
       <View style={styles.content} pointerEvents={pointerEvents}>
+        {left?
+        left({
+          color: descriptionColor,
+          style: {
+              ...styles.iconMarginLeft,
+              ...styles.marginVerticalNone,
+            },
+        }):null}
         {children}
       </View>
     </TouchableRipple>
@@ -97,6 +114,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  marginVerticalNone: { marginVertical: 0 },
+  iconMarginLeft: { marginLeft: 0, marginRight: 16 },
 });
 
 export default withTheme(DataTableRow);

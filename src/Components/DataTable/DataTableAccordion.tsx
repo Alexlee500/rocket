@@ -7,10 +7,13 @@ import {
   ViewStyle,
   ViewProps,
 } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { DataTable, TouchableRipple } from 'react-native-paper';
+import MaterialCommunityIcon from 'react-native-paper/src/components/MaterialCommunityIcon';
 import { black, white } from 'react-native-paper/src/styles/colors';
 import { withTheme } from 'react-native-paper/src/core/theming';
 import type { $RemoveChildren } from 'react-native-paper/src/types'
+import Colors from '../../configs/Colors';
+import DataTableIcon from './DataTableIcon';
 
 type Props = $RemoveChildren<typeof TouchableRipple> & {
   /**
@@ -84,15 +87,24 @@ const DataTableAccordion = ({
     console.log(`pressed ${expanded}`)
     setExpanded((expanded) => !expanded);
   }
+
   return (
     <View> 
+
       <TouchableRipple
         onPress={handlePress}
       >
-        {mainRow}
+        <View>
+
+         { React.cloneElement(mainRow,{ left:props => <DataTableIcon {...props} icon={expanded? 'chevron-down' : 'chevron-right'} />})}
+        </View>
       </TouchableRipple>
       <View>
-        {expanded? children : null}
+        {expanded? 
+          React.Children.map(children, (child) => {
+            return React.cloneElement(child, { style:[styles.child, child.props.style]})
+          })
+        : null}
       </View>
     </View>
   )
@@ -112,7 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   child:{
-    paddingLeft: 64,
+    paddingLeft: 32,
   }
 });
 

@@ -18,6 +18,10 @@ import DataTableAccordion, {
     DataTableAccordion as _DataTableAccordion, 
 } from './DataTableAccordion'
 
+
+import DataTableIcon from './DataTableIcon'
+
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import DataTableRow, { DataTableRow as _DataTableRow } from './DataTableRow';
 
@@ -100,6 +104,8 @@ DataTable.Cell = DataTableCell;
 DataTable.Pagination = DataTablePagination;
 
 DataTable.Accordion = DataTableAccordion;
+
+DataTable.Icon = DataTableIcon
 
 const styles = StyleSheet.create({
   container: {
