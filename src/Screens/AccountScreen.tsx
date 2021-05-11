@@ -65,10 +65,10 @@ export default function AccountScreen() {
                     key={0}
                     mainRow={                    
                     <DataTable.Row key={0} >
-                        <DataTable.Cell >Main1</DataTable.Cell>
-                        <DataTable.Cell numeric>1</DataTable.Cell>
-                        <DataTable.Cell numeric>2</DataTable.Cell>
-                        <DataTable.Cell numeric>3</DataTable.Cell>
+                    <DataTable.MultiRowCell mainText="GME" subText="+100000" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="GME" subText="+10" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="GME" subText="+10" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="$10000" subText="13" subDirection={1}/>
                     </DataTable.Row>
                 }>
                     <DataTable.Row key={0.1}>
@@ -107,11 +107,11 @@ export default function AccountScreen() {
                         <DataTable.Cell numeric>c3</DataTable.Cell>
                     </DataTable.Row>
                 </DataTable.Accordion>
-                <DataTable.Row key={2} >
-                    <DataTable.Cell >Test 2</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                    <DataTable.Cell numeric>3</DataTable.Cell>
+                <DataTable.Row key={2} style={{paddingLeft:40}}>
+                    <DataTable.MultiRowCell mainText="GME" subText="+100" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="GME" subText="+10" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="GME" subText="+10" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="$10000" subText="13" subDirection={1}/>
                 </DataTable.Row>
                 <DataTable.Row key={3}>
                     <DataTable.Cell >Test 3</DataTable.Cell>

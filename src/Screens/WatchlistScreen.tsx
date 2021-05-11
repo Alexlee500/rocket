@@ -176,7 +176,7 @@ export default function WatchlistScreen() {
                         requestSort('percentChange')
                     }}>% Change</DataTable.Title>
             </DataTable.Header>
-            <ScrollView style={{flex:1}}> 
+            <ScrollView > 
                 {watchlistRows}
             </ScrollView> 
             </DataTable>

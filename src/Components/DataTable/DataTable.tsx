@@ -24,6 +24,7 @@ import DataTableIcon from './DataTableIcon'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import DataTableRow, { DataTableRow as _DataTableRow } from './DataTableRow';
+import DataTableMultiRowCell from './DataTableMultiRowCell';
 
 type Props = React.ComponentPropsWithRef<typeof View> & {
   /**
@@ -106,6 +107,8 @@ DataTable.Pagination = DataTablePagination;
 DataTable.Accordion = DataTableAccordion;
 
 DataTable.Icon = DataTableIcon
+
+DataTable.MultiRowCell = DataTableMultiRowCell
 
 const styles = StyleSheet.create({
   container: {

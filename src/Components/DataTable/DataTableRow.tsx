@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  marginVerticalNone: { marginVertical: 0 },
-  iconMarginLeft: { marginLeft: 0, marginRight: 16 },
+  marginVerticalNone: { marginVertical: 0 }
 });
 
 export default withTheme(DataTableRow);

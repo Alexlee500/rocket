@@ -14,7 +14,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-const ICON_SIZE = 16;
+const ICON_SIZE = 20;
 
 const DataTableIcon = ({ icon, color: iconColor, style }: Props) => (
   <View style={[styles.item, style]} pointerEvents="box-none">
@@ -24,8 +24,8 @@ const DataTableIcon = ({ icon, color: iconColor, style }: Props) => (
 
 const styles = StyleSheet.create({
   item: {
-    margin: 8,
-    height: 40,
+    marginRight: 8,
+    height: 48,
     width: 16,
     alignItems: 'center',
     justifyContent: 'center',

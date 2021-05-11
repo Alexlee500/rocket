@@ -96,7 +96,10 @@ const DataTableAccordion = ({
       >
         <View>
 
-         { React.cloneElement(mainRow,{ left:props => <DataTableIcon {...props} icon={expanded? 'chevron-down' : 'chevron-right'} />})}
+         { React.cloneElement(mainRow,{ 
+            style:[styles.container, styles.iconMarginLeft,  mainRow.props.style],
+            left:props => <DataTableIcon {...props} icon={expanded? 'chevron-down' : 'chevron-right'} />
+            })}
         </View>
       </TouchableRipple>
       <View>
@@ -118,14 +121,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     minHeight: 48,
     paddingHorizontal: 16,
+
   },
   content: {
     flex: 1,
     flexDirection: 'row',
   },
   child:{
-    paddingLeft: 32,
-  }
+    paddingLeft: 40,
+  },
+
 });
 
 export default withTheme(DataTableAccordion);
