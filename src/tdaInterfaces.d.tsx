@@ -109,14 +109,16 @@ declare interface Instrument{
 }
 
 declare interface SecuritiesAccount{
-    type: string, 
-    accountId: string, 
-    roundTrips: number, 
-    isDayTrader: boolean, 
-    isClosingOnlyRestricted: boolean,
-    positions: Position[],
-    initialBalances:{
+    securitiesAccount:{
+        type: string, 
+        accountId: string, 
+        roundTrips: number, 
+        isDayTrader: boolean, 
+        isClosingOnlyRestricted: boolean,
+        positions: Position[],
+        initialBalances:{
         accountValue: number
+        }
     }
 }
 
@@ -128,6 +130,6 @@ declare interface Position{
     longQuantity: number,
     settledLongQuantity: number,
     settledShortQuantity: number, 
-    instrument: Instrument[],
+    instrument: Instrument,
     marketValue: number
 }

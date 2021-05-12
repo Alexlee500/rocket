@@ -11,14 +11,84 @@ import { Appbar, List, Card, Title, Paragraph} from 'react-native-paper';
 
 import Colors from '../configs/Colors'
 import  DataTable from '../Components/DataTable/DataTable'
+import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
 
 
 export default function AccountScreen() {
     const dispatch = useDispatch();
     const PrincipalData = useSelector( selectUserPrincipals )
-    const AccountData = useSelector(selectAccountData)
+    const AccountData:SecuritiesAccount = useSelector(selectAccountData)
+    const [accountPositions, setAccountPositions] = React.useState([]);
 
-    console.log(JSON.stringify(AccountData))
+    useEffect(() => {
+        const result = {};
+        AccountData.securitiesAccount.positions.forEach((item) => {
+            const { averagePrice, shortQuantity, longQuantity } = item
+            const { symbol, assetType, putCall, description} = item.instrument
+            const underlyingSymbol = item.instrument.underlyingSymbol || symbol
+            const quantity = shortQuantity || longQuantity
+            const longShort = shortQuantity || longQuantity ? 'short' : 'long'
+            
+
+            if (!result[underlyingSymbol]) {
+                result[underlyingSymbol] = []
+            }
+
+            result[underlyingSymbol].push({
+                symbol,
+                description,
+                assetType,
+                averagePrice,
+                quantity,
+                shortQuantity, 
+                longQuantity,
+                putCall
+            })
+        })
+
+        const final = Object.keys(result)
+            .sort()
+            .map((key) => ({
+                underlyingSymbol: key,
+                positions: result[key]
+            }));
+        console.log(JSON.stringify(final))
+        setAccountPositions(final)
+        /*
+        let posLst = AccountData.securitiesAccount.positions.map((item) => {
+            return item.instrument.underlyingSymbol || item.instrument.symbol
+        })
+
+        let symbols = AccountData.securitiesAccount.positions.map((item) => {
+            return {
+                underlyingSymbol: item.instrument.underlyingSymbol || item.instrument.symbol,
+                symbol: item.instrument.symbol,
+                putCall: item.instrument.putCall,
+                shortQuantity: item.shortQuantity,
+                longQuantity: item.longQuantity,
+                averagePrice: item.averagePrice
+
+            }
+        })
+
+        let accountSymbols = [...new Set(posLst)].sort();
+
+
+        console.log(accountSymbols)
+        
+        let res = accountSymbols.map((sym) => {
+            return {
+                underlying: sym,
+                positions: symbols.filter((symbols) => {return symbols.underlyingSymbol === sym ? sym : null})
+            }
+        })
+
+        console.log(JSON.stringify(res))
+        setAccountPositions(res);
+        
+        */
+    }, [AccountData])
+
     let onLogout = () => {
 
         const logout = async() => {
@@ -31,6 +101,57 @@ export default function AccountScreen() {
         logout();
     }
     
+
+    const positionRows = accountPositions.map((item) => {
+        console.log(`${item} len  ${item.positions.length}`)
+
+        if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
+
+            return (
+                <DataTable.Row key={item.underlyingSymbol} style={{paddingLeft:48}}>
+                <DataTable.MultiRowCell 
+                    mainText={item.underlyingSymbol} 
+                    subText={(item.positions[0].shortQuantity || item.positions[0].longQuantity ?'+' : '-') + (item.positions[0].shortQuantity || item.positions[0].longQuantity)}
+                    subDirection={(item.positions[0].shortQuantity > item.positions[0].longQuantity ? -1 : 1)}
+                />
+                <DataTable.Cell numeric>1</DataTable.Cell>
+                <DataTable.Cell numeric>2</DataTable.Cell>
+                </DataTable.Row>
+            )
+        }
+        else{
+            return (
+                <DataTable.Accordion 
+                key={item.underlyingSymbol}
+                mainRow={                    
+                    <DataTable.Row key={0} >
+                    <DataTable.Cell>{item.underlyingSymbol}</DataTable.Cell>
+                    <DataTable.MultiRowCell numeric mainText="$150.69" subText="+12.2%" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText="$10000" mainDirection={1} subText="+34.2%" subDirection={1}/>
+                    </DataTable.Row>
+                }>
+                    {item.positions.map((sub) => {
+                        if (sub.assetType == 'EQUITY'){
+                            return null
+                        }
+                        else return (
+                            <DataTable.Row key={`${item.underlyingSymbol}_${sub.symbol}`}>
+                            <DataTable.MultiRowCell 
+                                mainText={sub.description}
+                                subText={(sub.longQuantity > sub.shortQuantity ?'+' : '-') + (sub.shortQuantity || sub.longQuantity)}
+                                subDirection={sub.longQuantity > sub.shortQuantity ? 1: -1}
+                            />
+                            <DataTable.Cell numeric>c1</DataTable.Cell>
+                            <DataTable.Cell numeric>c2</DataTable.Cell>
+                            </DataTable.Row>
+                        )
+                    })}
+                </DataTable.Accordion>
+            )
+        }
+    })
+
+
     return(
         <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
 
@@ -59,121 +180,7 @@ export default function AccountScreen() {
                 </DataTable.Header>
             </DataTable>
             <DataTable style={{flex:1}}>
-                <DataTable.Accordion 
-                    key={0}
-                    mainRow={                    
-                    <DataTable.Row key={0} >
-                    <DataTable.MultiRowCell mainText="GME" subText="+100000" subDirection={1}/>
-                    <DataTable.MultiRowCell numeric mainText="$150.69" subText="+12.2%" subDirection={1}/>
-                    <DataTable.MultiRowCell numeric mainText="$10000" mainDirection={1} subText="+34.2%" subDirection={1}/>
-                    </DataTable.Row>
-                }>
-                    <DataTable.Row key={0.1}>
-                        <DataTable.Cell >Child 1</DataTable.Cell>
-                        <DataTable.Cell numeric>c1</DataTable.Cell>
-                        <DataTable.Cell numeric>c2</DataTable.Cell>
-                    </DataTable.Row>
-                    <DataTable.Row key={0.2}>
-                        <DataTable.Cell >Child 2</DataTable.Cell>
-                        <DataTable.Cell numeric>c1</DataTable.Cell>
-                        <DataTable.Cell numeric>c2</DataTable.Cell>
-                    </DataTable.Row>
-                </DataTable.Accordion>
-                <DataTable.Accordion 
-                    key={1}
-                    mainRow={                    
-                    <DataTable.Row key={1.1}>
-                        <DataTable.Cell >Main2</DataTable.Cell>
-                        <DataTable.Cell numeric>1</DataTable.Cell>
-                        <DataTable.Cell numeric>2</DataTable.Cell>
-                    </DataTable.Row>
-                }>
-                    <DataTable.Row key={1.1}>
-                        <DataTable.Cell >Child 1</DataTable.Cell>
-                        <DataTable.Cell numeric>c1</DataTable.Cell>
-                        <DataTable.Cell numeric>c2</DataTable.Cell>
-                    </DataTable.Row>
-                    <DataTable.Row key={1.2}>
-                        <DataTable.Cell >Child 2</DataTable.Cell>
-                        <DataTable.Cell numeric>c1</DataTable.Cell>
-                        <DataTable.Cell numeric>c2</DataTable.Cell>
-                    </DataTable.Row>
-                </DataTable.Accordion>
-                <DataTable.Row key={2} style={{paddingLeft:48}}>
-                    <DataTable.MultiRowCell mainText="GME" subText="+100" subDirection={1}/>
-                    <DataTable.MultiRowCell numeric mainText="GME" subText="+10" subDirection={1}/>
-                    <DataTable.MultiRowCell numeric mainText="$10000" subText="13" subDirection={1}/>
-                </DataTable.Row>
-                <DataTable.Row key={3} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 3</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={4} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 4</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={5} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 5</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={6} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 6</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={7} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 7</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={8} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 8</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={9} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 9</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={10} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 10</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={11} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 11</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={12} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 12</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={13} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 13</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={14} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 14</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={15} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 15</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
-                <DataTable.Row key={16} style={{paddingLeft:48}}>
-                    <DataTable.Cell >Test 16</DataTable.Cell>
-                    <DataTable.Cell numeric>1</DataTable.Cell>
-                    <DataTable.Cell numeric>2</DataTable.Cell>
-                </DataTable.Row>
+                {positionRows}
             </DataTable>
             </ScrollView>
         </View>
