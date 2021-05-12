@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: StyleSheet.hairlineWidth,
     minHeight: 48,
-    paddingHorizontal: 16,
+    paddingRight:16,
+    paddingLeft:16
   },
   content: {
     flex: 1,

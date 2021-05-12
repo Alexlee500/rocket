@@ -7,7 +7,7 @@ import {
   ViewStyle,
   ViewProps,
 } from 'react-native';
-import { DataTable, TouchableRipple } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
 import MaterialCommunityIcon from 'react-native-paper/src/components/MaterialCommunityIcon';
 import { black, white } from 'react-native-paper/src/styles/colors';
 import { withTheme } from 'react-native-paper/src/core/theming';
@@ -92,13 +92,12 @@ const DataTableAccordion = ({
     <View> 
 
       <TouchableRipple
-        onPress={handlePress}
       >
         <View>
 
          { React.cloneElement(mainRow,{ 
             style:[styles.container, styles.iconMarginLeft,  mainRow.props.style],
-            left:props => <DataTableIcon {...props} icon={expanded? 'chevron-down' : 'chevron-right'} />
+            left:props => <DataTableIcon {...props} icon={expanded? 'chevron-down' : 'chevron-right'} onPress={handlePress} />
             })}
         </View>
       </TouchableRipple>
@@ -120,15 +119,17 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: StyleSheet.hairlineWidth,
     minHeight: 48,
-    paddingHorizontal: 16,
-
+    paddingRight: 16,
+    paddingLeft:0
   },
   content: {
     flex: 1,
     flexDirection: 'row',
   },
   child:{
-    paddingLeft: 40,
+    paddingLeft: 44,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.TextLight
   },
 
 });

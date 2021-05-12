@@ -63,7 +63,7 @@ export const subscribeAccountActivity = (PrincipalData:UserPrincipals) => {
     return subRequest
 }
 
-export const subscribeQuote = ( PrincipalData:UserPrincipals, quotes ) => {
+export const subscribeQuote = ( PrincipalData:UserPrincipals, symbols ) => {
     var subRequest = {
         "requests": [{
             "service": "QUOTE",
@@ -72,7 +72,7 @@ export const subscribeQuote = ( PrincipalData:UserPrincipals, quotes ) => {
             "account": PrincipalData.accounts[0].accountId,
             "source": AmeritradeConf.clientId,
             "parameters": {
-                "keys": quotes,
+                "keys": symbols,
                 "fields": "0,1,2,3,4,5,6,7,8,15,25,28,29,49"
             }
         }]
@@ -89,6 +89,23 @@ export const LogoutRequest = ( PrincipalData:UserPrincipals ) => {
             "account": PrincipalData.accounts[0].accountId, 
             "source": AmeritradeConf.clientId, 
             "parameters": { }
+        }]
+    }
+    return subRequest
+}
+
+export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols) => {
+    var subRequest = {
+        "requests": [{
+            "service": "CHART_EQUITY",
+            "requestid": "2",
+            "command": "SUBS",
+            "account": PrincipalData.accounts[0].accountId,
+            "source": AmeritradeConf.clientId,
+            "parameters": {
+                "keys": symbols,
+                "fields": "0,1,2,3,4,5,6,7,8"
+            }
         }]
     }
     return subRequest

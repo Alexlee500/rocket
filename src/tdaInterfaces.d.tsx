@@ -102,9 +102,32 @@ declare interface watchlistItem {
 declare interface Instrument{
     symbol: string,
     description: string,
-    assetType: string
+    assetType: string, 
+    cusip: string,
+    putCall: string,
+    underlyingSymbol: string
 }
 
 declare interface SecuritiesAccount{
-    
+    type: string, 
+    accountId: string, 
+    roundTrips: number, 
+    isDayTrader: boolean, 
+    isClosingOnlyRestricted: boolean,
+    positions: Position[],
+    initialBalances:{
+        accountValue: number
+    }
+}
+
+declare interface Position{
+    shortQuantity: number, 
+    averagePrice: number,
+    currentDayProfitLoss: number, 
+    currentDayProfitLossPercentage: number,
+    longQuantity: number,
+    settledLongQuantity: number,
+    settledShortQuantity: number, 
+    instrument: Instrument[],
+    marketValue: number
 }

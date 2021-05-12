@@ -92,10 +92,6 @@ export async function getuserprincipals(accessToken: string) : Promise<UserPrinc
     return resJson;
 }
 
-export async function getAccountData( accessToken: string, accountId: string ): Promise<SecuritiesAccount>{
-    return 
-}
-
 export async function getWatchlistsForAccount( accessToken: string, accountId: string ) : Promise<Watchlists>{
     const resourceUrl = `https://api.tdameritrade.com/v1/accounts/${accountId}/watchlists`;
     var res = await fetch(resourceUrl, {
@@ -104,6 +100,18 @@ export async function getWatchlistsForAccount( accessToken: string, accountId: s
         }
     })
     var resJson:Watchlists = await res.json();
+    return resJson
+}
+
+export async function getAccount(accessToken: string, accountId: string) : Promise<SecuritiesAccount>{
+    const resourceUrl = `https://api.tdameritrade.com/v1/accounts/${accountId}?fields=positions%2Corders`;
+    var res = await fetch(resourceUrl, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+
+    var resJson:SecuritiesAccount = await res.json();
     return resJson
 }
  

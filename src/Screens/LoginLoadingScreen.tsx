@@ -19,7 +19,8 @@ import { selectSocketConnected,
         selectLoginLoading,
         setLoginLoading,
         setWatchlistData,
-        selectWatchlist
+        selectWatchlist,
+        setAccountData
         } from '../Redux/features/tdaSlice'
 
 
@@ -41,7 +42,8 @@ export default function LoginLoadingScreen() {
 
             var wl = await tda.getWatchlistsForAccount(AcsToken.access_token, pd.accounts[0].accountId)
             dispatch(setWatchlistData(wl))
-            
+            var accData = await tda.getAccount(AcsToken.access_token, pd.accounts[0].accountId)
+            dispatch(setAccountData(accData))
             dispatch(connect(`wss://${pd.streamerInfo.streamerSocketUrl}/ws`))
         }
         loadData()

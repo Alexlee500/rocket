@@ -26,6 +26,7 @@ interface tdaSlice{
     accessToken: string
     userPrincipals: UserPrincipals
     watchlistData: Watchlists
+    accountData: SecuritiesAccount
 }
 
 const quoteAdapter = createEntityAdapter({})
@@ -39,6 +40,7 @@ const initialState = {
     accessToken:'',
     userPrincipals: null,
     watchlistData: null, 
+    accountData: null
 }
 
 
@@ -69,7 +71,10 @@ export const tdaSlice = createSlice({
         },
         setWatchlistData:(state, action: PayloadAction<Watchlists>) => {
             state.watchlistData = action.payload
-        }
+        },
+        setAccountData:(state, action: PayloadAction<SecuritiesAccount>) => {
+            state.accountData = action.payload
+        },    
     },
     extraReducers:(builder) => {
         builder
@@ -196,12 +201,15 @@ export const selectUserPrincipals = state => state.tda.userPrincipals;
 export const selectSocketConnected = state => state.tda.socketConnected;
 export const selectSocketAuth = state => state.tda.socketAuthenticated;
 export const selectWatchlist = state => state.tda.watchlistData;
+export const selectAccountData = state => state.tda.accountData;
+
 export const {  setRefreshToken, 
                 setAccessToken, 
                 setUserPrincipalJson, 
                 setLoginLoading, 
                 resetConnections, 
-                setWatchlistData 
+                setWatchlistData,
+                setAccountData
             } = tdaSlice.actions
 
 export default tdaSlice.reducer;
