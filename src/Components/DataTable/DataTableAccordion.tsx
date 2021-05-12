@@ -84,7 +84,6 @@ const DataTableAccordion = ({
 
   const handlePress = () => {
     onPress?.();
-    console.log(`pressed ${expanded}`)
     setExpanded((expanded) => !expanded);
   }
 

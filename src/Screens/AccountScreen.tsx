@@ -52,7 +52,6 @@ export default function AccountScreen() {
                 underlyingSymbol: key,
                 positions: result[key]
             }));
-        console.log(JSON.stringify(final))
         setAccountPositions(final)
         /*
         let posLst = AccountData.securitiesAccount.positions.map((item) => {
@@ -103,7 +102,6 @@ export default function AccountScreen() {
     
 
     const positionRows = accountPositions.map((item) => {
-        console.log(`${item} len  ${item.positions.length}`)
 
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
 
