@@ -5,7 +5,7 @@ import { send, disconnect  } from '@giantmachines/redux-websocket';
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
-import { quoteFieldMap } from '../api/AmeritradeHelper';
+import { quoteFieldMap, optionFieldMap } from '../api/AmeritradeHelper';
 
 import { deauthenticate } from '../Redux/features/authSlice';
 import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
@@ -109,8 +109,7 @@ export default function AccountScreen() {
     
 
     const positionRows = accountPositions.map((item) => {
-        let UnderlyingPercentDelta =  (((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
-
+        let UnderlyingPercentDelta =  (((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2) || 0
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
 
             return (
@@ -121,7 +120,7 @@ export default function AccountScreen() {
                     subDirection={(item.positions[0].shortQuantity > item.positions[0].longQuantity ? -1 : 1)}
                 />
                 <DataTable.MultiRowCell numeric
-                    mainText={allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}
+                    mainText={`$${allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}`}
                     subText={`${UnderlyingPercentDelta >=0 ? '+' :''}${UnderlyingPercentDelta}%`}
                     subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
                 />   
@@ -145,6 +144,8 @@ export default function AccountScreen() {
                     </DataTable.Row>
                 }>
                     {item.positions.map((sub) => {
+                        let OptionPercentDelta = (((allEntities?.[sub.symbol]?.[optionFieldMap.Mark]-allEntities?.[sub.symbol]?.[optionFieldMap.Close])/allEntities?.[sub.symbol]?.[optionFieldMap.Close] ) * 100).toFixed(2) || 0
+
                         if (sub.assetType == 'EQUITY'){
                             return null
                         }
@@ -157,7 +158,8 @@ export default function AccountScreen() {
                             />
                             <DataTable.MultiRowCell numeric
                                 mainText={`$${JSON.stringify(allEntities?.[sub.symbol]?.['41'])}`}
-                                subText={`${sub.symbol}`}
+                                subText={`${OptionPercentDelta}`}
+                                subDirection={OptionPercentDelta >= 0? 1:-1}
                             /> 
                             <DataTable.Cell numeric>c2</DataTable.Cell>
                             </DataTable.Row>

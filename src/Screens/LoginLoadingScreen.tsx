@@ -5,6 +5,8 @@ import * as SecureStore from 'expo-secure-store';
 import { useDispatch, useSelector} from 'react-redux';
 import { connect, send  } from '@giantmachines/redux-websocket';
 import { parseISO } from 'date-fns'
+import { renameQuoteResponse, renameApiResponse } from '../api/AmeritradeHelper';
+import { upsertQuotes } from '../Redux/features/quoteSlice';
 import SecureStoreVars from '../vars/SecureStoreVars';
 import * as tda from '../api/AmeritradeApi';
 import { AuthRequest,
@@ -116,12 +118,22 @@ export default function LoginLoadingScreen() {
     
                 accountData.securitiesAccount.positions.forEach((item) => {
                     subscribeSymbolList.push(item.instrument.underlyingSymbol)
+                    if(item.instrument.assetType == 'EQUITY'){
+                        subscribeSymbolList.push(item.instrument.symbol)
+                    }
                     if(item.instrument.assetType == 'OPTION'){
                         subscribeOptionsList.push(item.instrument.symbol)
                     }
+                    
                 })
-                let initialQuoteData = await tda.getQuotes(accessToken.access_token, subscribeSymbolList);
+                console.log(subscribeSymbolList);
+
+                let mergedSymList = subscribeSymbolList.concat(subscribeOptionsList);
+                let initialQuoteData = await tda.getQuotes(accessToken.access_token, mergedSymList);
+
                 
+                let renamedQuoteData = renameApiResponse(initialQuoteData)
+                dispatch(upsertQuotes(renamedQuoteData));
                 var subRequestQuotes = subscribeQuote(PrincipalData, subscribeSymbolList.toString())
                 dispatch(send(subRequestQuotes))
                 var subRequestOptions = subscribeOptions(PrincipalData, subscribeOptionsList.toString())
@@ -133,6 +145,8 @@ export default function LoginLoadingScreen() {
         loadData();  
     }, [SockAuth, accessToken])
     
+    
+
 
     
     return (
