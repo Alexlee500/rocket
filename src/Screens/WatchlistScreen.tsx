@@ -108,6 +108,10 @@ export default function WatchlistScreen() {
 
     const watchlistRows = watchlistSymbols.map((item) => {
         let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
+        //let percentDelta =  (((allEntities?.[item]?.[29])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
+
+        //console.log(`${allEntities?.[item]?.[29]} - ${allEntities?.[item]?.[quoteFieldMap.Mark]}`)
+        
         return (
             <DataTable.Row key={item}>
             <DataTable.Cell >{item}</DataTable.Cell>

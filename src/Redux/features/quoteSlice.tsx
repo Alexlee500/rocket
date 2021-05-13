@@ -36,7 +36,8 @@ const quoteSlice = createSlice({
         quoteAdded: quoteAdapter.addOne,
         quoteReceived(state, action){
             quoteAdapter.setAll(state, action.payload.quotes)
-        }
+        },
+        
     },
     extraReducers:(builder) => {
         builder
@@ -44,9 +45,8 @@ const quoteSlice = createSlice({
             let MessageData = JSON.parse(action.payload.event.data);
             try{
                 let response = MessageData?.data[0]
-                //console.log(`msg response for quote ${JSON.stringify(response)}`)
-                if (response?.service == "QUOTE" ){
-                    //console.log(`Upsert Many ${response.content}`)
+                if (response?.service == "QUOTE" || response?.service == "OPTION"){
+                    //console.log(`Upsert Many ${JSON.stringify(response.content)}`)
                     quoteAdapter.upsertMany(state, response.content);
                 }
             }catch{

@@ -115,3 +115,20 @@ export async function getAccount(accessToken: string, accountId: string) : Promi
     return resJson
 }
  
+
+export async function getQuotes(accessToken: string, quotes: string[]) : Promise<any>{
+    let qString = quotes.reduce((res, item) => {
+        if (item){
+            return `${res}%2C${item}`
+        } return res
+    })
+    const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/quotes?symbol=${qString}`;
+    var res = await fetch(resourceUrl, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    var resJson:any = await res.json();
+    return resJson
+
+}

@@ -110,6 +110,16 @@ export const tdaSlice = createSlice({
                     state.socketAuthenticated = true;
                 }
             }catch(error){}
+            try{
+                let response = MessageData?.response[0];
+                if (response?.service == "ADMIN" && response?.command == "LOGOUT" && response?.content.code == 0){
+                    console.log('LogOut request success')
+                    console.log(JSON.stringify(response))
+                    state.socketAuthenticated = false;
+                    state.socketConnected = false;
+                }
+            }catch(error){}
+            
             //console.log(action);
         })
     }

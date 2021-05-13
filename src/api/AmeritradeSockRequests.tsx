@@ -80,6 +80,23 @@ export const subscribeQuote = ( PrincipalData:UserPrincipals, symbols ) => {
     return subRequest
 }
 
+export const subscribeOptions = ( PrincipalData:UserPrincipals, symbols ) => {
+    var subRequest = {
+        "requests": [{
+            "service": "OPTION",
+            "requestid": "2",
+            "command": "SUBS",
+            "account": PrincipalData.accounts[0].accountId,
+            "source": AmeritradeConf.clientId,
+            "parameters": {
+                "keys": symbols,
+                "fields": "0,1,2,3,4,5,6,7,8,19,23,41"
+            }
+        }]
+    }
+    return subRequest
+}
+
 export const LogoutRequest = ( PrincipalData:UserPrincipals ) => {
     var subRequest = {
         "requests": [{

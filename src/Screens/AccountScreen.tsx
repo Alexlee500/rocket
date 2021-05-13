@@ -5,20 +5,25 @@ import { send, disconnect  } from '@giantmachines/redux-websocket';
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
+import { quoteFieldMap } from '../api/AmeritradeHelper';
+
 import { deauthenticate } from '../Redux/features/authSlice';
-import { Appbar, List, Card, Title, Paragraph} from 'react-native-paper';
+import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
 
 
 import Colors from '../configs/Colors'
 import  DataTable from '../Components/DataTable/DataTable'
-import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
+import { quoteSelector } from '../Redux/features/quoteSlice';
 
 
 export default function AccountScreen() {
     const dispatch = useDispatch();
     const PrincipalData = useSelector( selectUserPrincipals )
     const AccountData:SecuritiesAccount = useSelector(selectAccountData)
+    const allEntities = useSelector(quoteSelector.selectEntities);
+
     const [accountPositions, setAccountPositions] = React.useState([]);
+    const [visible, setVisible] = React.useState(false);
 
     useEffect(() => {
         const result = {};
@@ -87,7 +92,9 @@ export default function AccountScreen() {
         
         */
     }, [AccountData])
-
+    let printDebug = () => {
+        console.log(JSON.stringify(allEntities))
+    }
     let onLogout = () => {
 
         const logout = async() => {
@@ -102,6 +109,7 @@ export default function AccountScreen() {
     
 
     const positionRows = accountPositions.map((item) => {
+        let UnderlyingPercentDelta =  (((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
 
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
 
@@ -112,7 +120,11 @@ export default function AccountScreen() {
                     subText={(item.positions[0].shortQuantity || item.positions[0].longQuantity ?'+' : '-') + (item.positions[0].shortQuantity || item.positions[0].longQuantity)}
                     subDirection={(item.positions[0].shortQuantity > item.positions[0].longQuantity ? -1 : 1)}
                 />
-                <DataTable.Cell numeric>1</DataTable.Cell>
+                <DataTable.MultiRowCell numeric
+                    mainText={allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}
+                    subText={`${UnderlyingPercentDelta >=0 ? '+' :''}${UnderlyingPercentDelta}%`}
+                    subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
+                />   
                 <DataTable.Cell numeric>2</DataTable.Cell>
                 </DataTable.Row>
             )
@@ -124,7 +136,11 @@ export default function AccountScreen() {
                 mainRow={                    
                     <DataTable.Row key={0} >
                     <DataTable.Cell>{item.underlyingSymbol}</DataTable.Cell>
-                    <DataTable.MultiRowCell numeric mainText="$150.69" subText="+12.2%" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric
+                        mainText={`$${allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}`}
+                        subText={`${UnderlyingPercentDelta}%`}
+                        subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
+                    />                    
                     <DataTable.MultiRowCell numeric mainText="$10000" mainDirection={1} subText="+34.2%" subDirection={1}/>
                     </DataTable.Row>
                 }>
@@ -139,7 +155,10 @@ export default function AccountScreen() {
                                 subText={(sub.longQuantity > sub.shortQuantity ?'+' : '-') + (sub.shortQuantity || sub.longQuantity)}
                                 subDirection={sub.longQuantity > sub.shortQuantity ? 1: -1}
                             />
-                            <DataTable.Cell numeric>c1</DataTable.Cell>
+                            <DataTable.MultiRowCell numeric
+                                mainText={`$${JSON.stringify(allEntities?.[sub.symbol]?.['41'])}`}
+                                subText={`${sub.symbol}`}
+                            /> 
                             <DataTable.Cell numeric>c2</DataTable.Cell>
                             </DataTable.Row>
                         )
@@ -160,6 +179,27 @@ export default function AccountScreen() {
                 <Appbar.Content
                     title='Account'
                 />
+                <Menu
+                    visible={visible}
+                    statusBarHeight={0}
+                    style={{backgroundColor: Colors.SecondaryDark}}
+                    contentStyle={{backgroundColor: Colors.SecondaryDark}}
+                    anchor={
+                        <Appbar.Action icon="dots-vertical"
+                            onPress={()=> setVisible(true)}
+                            color={Colors.TextLight}
+                        />
+                    }
+                    onDismiss={() => setVisible(false)}>
+                        <Menu.Item 
+                            title='Debug'
+                            onPress={() => printDebug()}
+                        />
+                        <Menu.Item 
+                            title='Log Out'
+                            onPress={() => onLogout()}
+                        />
+                    </Menu>
             </Appbar.Header>
 
         <ScrollView stickyHeaderIndices={[1]}>
