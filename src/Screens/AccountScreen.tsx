@@ -110,8 +110,11 @@ export default function AccountScreen() {
 
     const positionRows = accountPositions.map((item) => {
         let UnderlyingPercentDelta =  (((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2) || 0
+                
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
-
+            let currentVal = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] * item.positions[0].longQuantity;
+            let purchaseVal = item.positions[0].averagePrice * item.positions[0].longQuantity
+            let netPercentDelta: number = Number((((currentVal-purchaseVal)/purchaseVal)*100).toFixed(2))
             return (
                 <DataTable.Row key={item.underlyingSymbol} style={{paddingLeft:48}}>
                 <DataTable.MultiRowCell 
@@ -124,7 +127,11 @@ export default function AccountScreen() {
                     subText={`${UnderlyingPercentDelta >=0 ? '+' :''}${UnderlyingPercentDelta}%`}
                     subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
                 />   
-                <DataTable.Cell numeric>2</DataTable.Cell>
+                <DataTable.MultiRowCell numeric
+                    mainText={`$${currentVal}`}
+                    subText={`${netPercentDelta >= 0? '+': ''}${netPercentDelta}%`}
+                    subDirection={netPercentDelta >= 0 ? 1 : -1}
+                />                 
                 </DataTable.Row>
             )
         }
@@ -216,7 +223,7 @@ export default function AccountScreen() {
                 <DataTable.Header style={{backgroundColor:Colors.MainDark, paddingLeft:48}}>
                     <DataTable.Title>Symbol</DataTable.Title>
                     <DataTable.Title numeric>Mark</DataTable.Title>
-                    <DataTable.Title numeric>P&L</DataTable.Title>
+                    <DataTable.Title numeric>Value</DataTable.Title>
                 </DataTable.Header>
             </DataTable>
             <DataTable style={{flex:1}}>

@@ -34,7 +34,7 @@ const quoteSlice = createSlice({
     initialState: quoteAdapter.getInitialState(),
     reducers: {
         upsertQuotes(state, action){
-            console.log(action.payload)
+            //console.log(action.payload)
             quoteAdapter.upsertMany(state, action.payload)
         },
 
@@ -46,7 +46,7 @@ const quoteSlice = createSlice({
             try{
                 let response = MessageData?.data[0]
                 if (response?.service == "QUOTE" || response?.service == "OPTION"){
-                    console.log(`Upsert Many ${JSON.stringify(response.content)}`)
+                    //console.log(`Upsert Many ${JSON.stringify(response.content)}`)
                     quoteAdapter.upsertMany(state, response.content);
                 }
             }catch{
