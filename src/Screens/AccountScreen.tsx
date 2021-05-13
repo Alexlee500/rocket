@@ -144,7 +144,7 @@ export default function AccountScreen() {
                     </DataTable.Row>
                 }>
                     {item.positions.map((sub) => {
-                        let OptionPercentDelta = (((allEntities?.[sub.symbol]?.[optionFieldMap.Mark]-allEntities?.[sub.symbol]?.[optionFieldMap.Close])/allEntities?.[sub.symbol]?.[optionFieldMap.Close] ) * 100).toFixed(2) || 0
+                        let OptionPercentDelta = (((allEntities?.[sub.symbol]?.[optionFieldMap.Mark]-allEntities?.[sub.symbol]?.[optionFieldMap.Close])/allEntities?.[sub.symbol]?.[optionFieldMap.Close] ) * 100 * (sub.longQuantity > sub.shortQuantity ? 1 : -1)).toFixed(2) || 0
 
                         if (sub.assetType == 'EQUITY'){
                             return null
@@ -158,7 +158,7 @@ export default function AccountScreen() {
                             />
                             <DataTable.MultiRowCell numeric
                                 mainText={`$${JSON.stringify(allEntities?.[sub.symbol]?.['41'])}`}
-                                subText={`${OptionPercentDelta}`}
+                                subText={`${OptionPercentDelta}%`}
                                 subDirection={OptionPercentDelta >= 0? 1:-1}
                             /> 
                             <DataTable.Cell numeric>c2</DataTable.Cell>
