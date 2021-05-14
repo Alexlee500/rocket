@@ -81,7 +81,6 @@ export async function getAccessFromRefreshToken(refreshToken:string) : Promise<A
 }
 
 export async function getuserprincipals(accessToken: string) : Promise<UserPrincipals>{
-    console.log(`getuserprincipals ${accessToken}`);
     const resourceUrl = "https://api.tdameritrade.com/v1/userprincipals?fields=streamerSubscriptionKeys%2CstreamerConnectionInfo";
     var res = await fetch(resourceUrl, {
         headers: {

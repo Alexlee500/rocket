@@ -90,7 +90,7 @@ export const subscribeOptions = ( PrincipalData:UserPrincipals, symbols ) => {
             "source": AmeritradeConf.clientId,
             "parameters": {
                 "keys": symbols,
-                "fields": "0,1,2,3,4,5,6,7,8,19,23,41"
+                "fields": "0,1,2,3,4,5,6,7,8,17,19,23,41"
             }
         }]
     }

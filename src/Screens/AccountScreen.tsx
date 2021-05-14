@@ -5,7 +5,7 @@ import { send, disconnect  } from '@giantmachines/redux-websocket';
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
-import { quoteFieldMap, optionFieldMap } from '../api/AmeritradeHelper';
+import { quoteFieldMap, optionFieldMap, renameOptionResponse } from '../api/AmeritradeHelper';
 
 import { deauthenticate } from '../Redux/features/authSlice';
 import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
@@ -14,6 +14,8 @@ import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
 import Colors from '../configs/Colors'
 import  DataTable from '../Components/DataTable/DataTable'
 import { quoteSelector } from '../Redux/features/quoteSlice';
+import DataTableRow from '../Components/DataTable/DataTableRow';
+import DataTableCell from '../Components/DataTable/DataTableCell';
 
 
 export default function AccountScreen() {
@@ -58,39 +60,6 @@ export default function AccountScreen() {
                 positions: result[key]
             }));
         setAccountPositions(final)
-        /*
-        let posLst = AccountData.securitiesAccount.positions.map((item) => {
-            return item.instrument.underlyingSymbol || item.instrument.symbol
-        })
-
-        let symbols = AccountData.securitiesAccount.positions.map((item) => {
-            return {
-                underlyingSymbol: item.instrument.underlyingSymbol || item.instrument.symbol,
-                symbol: item.instrument.symbol,
-                putCall: item.instrument.putCall,
-                shortQuantity: item.shortQuantity,
-                longQuantity: item.longQuantity,
-                averagePrice: item.averagePrice
-
-            }
-        })
-
-        let accountSymbols = [...new Set(posLst)].sort();
-
-
-        console.log(accountSymbols)
-        
-        let res = accountSymbols.map((sym) => {
-            return {
-                underlying: sym,
-                positions: symbols.filter((symbols) => {return symbols.underlyingSymbol === sym ? sym : null})
-            }
-        })
-
-        console.log(JSON.stringify(res))
-        setAccountPositions(res);
-        
-        */
     }, [AccountData])
     let printDebug = () => {
         console.log(JSON.stringify(allEntities))
@@ -107,13 +76,33 @@ export default function AccountScreen() {
         logout();
     }
     
+    const parseValue = (val) => {
+        return val ? (
+            '$'+ val
+        ):(
+            '-'
+        )
+    }
+
+    const parseValuePercent = (val) => {
+        return val ? (
+            (val>=0? '+':'') + val + '%'
+        ):(
+            '-'
+        )
+    }
+
+    const getDirection = (val) => {
+        if (val > 0) return 1;
+        if (val < 0) return -1;
+        return 0;
+    }
 
     const positionRows = accountPositions.map((item) => {
-        let UnderlyingPercentDelta =  (((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2) || 0
-                
+        let UnderlyingPercentDelta:number = Number((((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2))|| null
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
-            let currentVal = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] * item.positions[0].longQuantity;
-            let purchaseVal = item.positions[0].averagePrice * item.positions[0].longQuantity
+            let currentVal:number = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] * item.positions[0].longQuantity;
+            let purchaseVal:number = item.positions[0].averagePrice * item.positions[0].longQuantity
             let netPercentDelta: number = Number((((currentVal-purchaseVal)/purchaseVal)*100).toFixed(2))
             return (
                 <DataTable.Row key={item.underlyingSymbol} style={{paddingLeft:48}}>
@@ -123,19 +112,31 @@ export default function AccountScreen() {
                     subDirection={(item.positions[0].shortQuantity > item.positions[0].longQuantity ? -1 : 1)}
                 />
                 <DataTable.MultiRowCell numeric
-                    mainText={`$${allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}`}
-                    subText={`${UnderlyingPercentDelta >=0 ? '+' :''}${UnderlyingPercentDelta}%`}
-                    subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
+                    mainText={parseValue(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
+                    subText={parseValuePercent(UnderlyingPercentDelta)}
+                    subDirection={getDirection(UnderlyingPercentDelta)}
                 />   
                 <DataTable.MultiRowCell numeric
-                    mainText={`$${currentVal}`}
-                    subText={`${netPercentDelta >= 0? '+': ''}${netPercentDelta}%`}
-                    subDirection={netPercentDelta >= 0 ? 1 : -1}
+                    mainText={parseValue(currentVal)}
+                    subText={parseValuePercent(netPercentDelta)}
+                    subDirection={getDirection(netPercentDelta)}
                 />                 
                 </DataTable.Row>
             )
         }
         else{
+            var testVar = 0;
+
+            
+            let sum = item.positions.reduce((res, pos)=> {
+                return {
+                    purchaseVal:( res.purchaseVal ) + Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)), 
+                    currentVal:( res.currentVal ) + Number(allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity)) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]
+                }
+            }, {purchaseVal: 0, currentVal: 0})
+
+            let totalPercentDelta: number = Number((((sum.currentVal-sum.purchaseVal)/sum.purchaseVal)*100).toFixed(2))
+
             return (
                 <DataTable.Accordion 
                 key={item.underlyingSymbol}
@@ -143,20 +144,30 @@ export default function AccountScreen() {
                     <DataTable.Row key={0} >
                     <DataTable.Cell>{item.underlyingSymbol}</DataTable.Cell>
                     <DataTable.MultiRowCell numeric
-                        mainText={`$${allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]}`}
-                        subText={`${UnderlyingPercentDelta}%`}
-                        subDirection={UnderlyingPercentDelta >= 0 ? 1 : -1}
+                        mainText={parseValue(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
+                        subText={parseValuePercent(UnderlyingPercentDelta)}
+                        subDirection={getDirection(UnderlyingPercentDelta)}
                     />                    
-                    <DataTable.MultiRowCell numeric mainText="$10000" mainDirection={1} subText="+34.2%" subDirection={1}/>
+                    <DataTable.MultiRowCell numeric mainText={`$${sum.currentVal.toFixed(2)}`} mainDirection={0} subText={parseValuePercent(totalPercentDelta)} subDirection={getDirection(totalPercentDelta)}/>
                     </DataTable.Row>
                 }>
                     {item.positions.map((sub) => {
                         let OptionPercentDelta = (((allEntities?.[sub.symbol]?.[optionFieldMap.Mark]-allEntities?.[sub.symbol]?.[optionFieldMap.Close])/allEntities?.[sub.symbol]?.[optionFieldMap.Close] ) * 100 * (sub.longQuantity > sub.shortQuantity ? 1 : -1)).toFixed(2) || 0
+                        //console.log(JSON.stringify(sub))
 
                         if (sub.assetType == 'EQUITY'){
-                            return null
+                            <DataTableRow key={`${item.underlyingSymbol}_${sub.symbol}`}>
+                                <DataTableCell>{sub.symbol}</DataTableCell>
+                            </DataTableRow>
                         }
-                        else return (
+                        else {
+
+                            let currentVal:number = Number(allEntities?.[sub.symbol]?.[optionFieldMap.Mark] * (sub.longQuantity || sub.shortQuantity)) * allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]
+                            let purchaseVal:number = Number(sub.averagePrice * (sub.longQuantity || sub.shortQuantity) * (allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]) * (sub.longQuantity > sub.shortQuantity ? 1 : -1)) 
+                            let netPercentDelta: number = Number((((currentVal-purchaseVal)/purchaseVal)*100).toFixed(2))
+                            //console.log(`${sub.symbol} ${allEntities?.[sub.symbol]?.[optionFieldMap.Mark]} * ${(sub.longQuantity || sub.shortQuantity)} * ${allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]}`)
+                            //console.log(`${sub.symbol} ${currentVal} - ${purchaseVal}`)
+                            return (
                             <DataTable.Row key={`${item.underlyingSymbol}_${sub.symbol}`}>
                             <DataTable.MultiRowCell 
                                 mainText={sub.description}
@@ -164,13 +175,17 @@ export default function AccountScreen() {
                                 subDirection={sub.longQuantity > sub.shortQuantity ? 1: -1}
                             />
                             <DataTable.MultiRowCell numeric
-                                mainText={`$${JSON.stringify(allEntities?.[sub.symbol]?.['41'])}`}
-                                subText={`${OptionPercentDelta}%`}
-                                subDirection={OptionPercentDelta >= 0? 1:-1}
+                                mainText={parseValue(allEntities?.[sub.symbol]?.[optionFieldMap.Mark])}
+                                subText={parseValuePercent(OptionPercentDelta)}
+                                subDirection={getDirection(OptionPercentDelta)}
                             /> 
-                            <DataTable.Cell numeric>c2</DataTable.Cell>
+                            <DataTable.MultiRowCell numeric
+                                mainText={parseValue(currentVal)}
+                                subText={parseValuePercent(netPercentDelta)}
+                                subDirection={getDirection(netPercentDelta)}
+                            /> 
                             </DataTable.Row>
-                        )
+                        )}
                     })}
                 </DataTable.Accordion>
             )

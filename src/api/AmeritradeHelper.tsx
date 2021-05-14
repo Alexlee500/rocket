@@ -10,6 +10,7 @@ export const quoteFieldMap = {
 export const optionFieldMap = {
     Description: "1",
     Close: "7",
+    Multiplier: "17",
     Mark: "41"
 }
 
@@ -36,6 +37,7 @@ export const renameOptionResponse = (initialResponse) => {
             2: initialResponse[item].bidPrice,
             3: initialResponse[item].askPrice,
             7: initialResponse[item].closePrice,
+            17: initialResponse[item].multiplier,
             23: initialResponse[item].netChange,
             41: initialResponse[item].mark
         }
