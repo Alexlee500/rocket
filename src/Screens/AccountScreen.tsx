@@ -78,7 +78,7 @@ export default function AccountScreen() {
     
     const parseValue = (val) => {
         return val ? (
-            '$'+ val.toFixed(2)
+            (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
         ):(
             '-'
         )
@@ -97,6 +97,27 @@ export default function AccountScreen() {
         if (val < 0) return -1;
         return 0;
     }
+
+    const accountValues = accountPositions.reduce((sum, item) => {
+        let itemSum = item.positions.reduce((positionsSum, pos) => {
+            if (pos.assetType == "OPTION"){
+                return {
+                    purchaseVal:( positionsSum.purchaseVal ) + (Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)) || 0), 
+                    currentVal:( positionsSum.currentVal ) + (Number( allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier] * (pos.longQuantity > pos.shortQuantity ? 1 : -1)) || 0)
+                }
+            }
+            else return {
+                purchaseVal:( positionsSum.purchaseVal ) + (Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)) || 0), 
+                currentVal:( positionsSum.currentVal ) + (Number(allEntities?.[pos.symbol]?.[quoteFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity)) || 0)
+            }
+        }, {currentVal: 0, purchaseVal: 0})
+        return {
+            currentVal: sum.currentVal + itemSum.currentVal,
+            purchaseVal: sum.purchaseVal + itemSum.purchaseVal
+        }
+    }, {currentVal: AccountData.securitiesAccount.initialBalances.cashBalance, purchaseVal: 0})
+
+    //console.log(accountValues)
 
     const positionRows = accountPositions.map((item) => {
         let UnderlyingPercentDelta:number = Number((((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2))|| null
@@ -129,7 +150,7 @@ export default function AccountScreen() {
             
             let sum = item.positions.reduce((res, pos)=> {
                 if (pos.assetType == "OPTION"){
-                    console.log(`${pos.symbol} ${pos.longQuantity > pos.shortQuantity ? 'long' : 'short'} ${pos.averagePrice}`)
+                    //console.log(`${pos.symbol} ${pos.longQuantity > pos.shortQuantity ? 'long' : 'short'} ${pos.averagePrice}`)
                     return {
                         purchaseVal:( res.purchaseVal ) + Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)), 
                         currentVal:( res.currentVal ) + Number( allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier] * (pos.longQuantity > pos.shortQuantity ? 1 : -1))
@@ -171,7 +192,7 @@ export default function AccountScreen() {
                         }
                         else {
 
-                            let currentVal:number = Number(allEntities?.[sub.symbol]?.[optionFieldMap.Mark] * (sub.longQuantity || sub.shortQuantity)) * allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]
+                            let currentVal:number = Number(allEntities?.[sub.symbol]?.[optionFieldMap.Mark] * (sub.longQuantity || sub.shortQuantity) * allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]  * (sub.longQuantity > sub.shortQuantity ? 1 : -1))
                             let purchaseVal:number = Number(sub.averagePrice * (sub.longQuantity || sub.shortQuantity) * (allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]) * (sub.longQuantity > sub.shortQuantity ? 1 : -1)) 
                             let netPercentDelta: number = Number((((currentVal-purchaseVal)/purchaseVal)*100).toFixed(2))
                             //console.log(`${sub.symbol} ${allEntities?.[sub.symbol]?.[optionFieldMap.Mark]} * ${(sub.longQuantity || sub.shortQuantity)} * ${allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]}`)
@@ -190,6 +211,7 @@ export default function AccountScreen() {
                             /> 
                             <DataTable.MultiRowCell numeric
                                 mainText={parseValue(currentVal)}
+                                mainDirection={getDirection(currentVal)}
                                 subText={parseValuePercent(netPercentDelta)}
                                 subDirection={getDirection(netPercentDelta)}
                             /> 
