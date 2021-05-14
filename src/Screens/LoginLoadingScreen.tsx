@@ -45,8 +45,13 @@ export default function LoginLoadingScreen() {
 
     useEffect(() => {
         const loadData = async () => {
+            console.log('ree')
             let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-            setRefreshToken(refToken);
+            if (refToken){
+                setRefreshToken(refToken);
+                console.log(refToken)
+            }
+
             //AcsToken = await tda.getAccessFromRefreshToken(await refToken);
             /*
             await setAccessToken(await tda.getAccessFromRefreshToken(await refToken))
@@ -67,6 +72,7 @@ export default function LoginLoadingScreen() {
     useEffect(() => {
         const hasRefreshToken = async() => {
             if (refreshToken) { 
+                console.log(`has refresh`)
                 let aT = await tda.getAccessFromRefreshToken(refreshToken)
                 setAccessToken(aT)
             }
@@ -78,6 +84,7 @@ export default function LoginLoadingScreen() {
     useEffect(() => {
         const hasAccessToken = async() => {
             if (accessToken){
+                console.log(`has access`)
                 let pd = await tda.getuserprincipals(accessToken.access_token);
                 dispatch(setUserPrincipalJson(pd));
                 var wl = await tda.getWatchlistsForAccount(accessToken.access_token, pd.accounts[0].accountId)
@@ -93,6 +100,7 @@ export default function LoginLoadingScreen() {
 
     useEffect(() => {
         if (SockConnected){
+            console.log(`sock connected`)
             var authRequest = AuthRequest(PrincipalData);
             dispatch(send(authRequest));        
         }
@@ -102,6 +110,7 @@ export default function LoginLoadingScreen() {
     useEffect(() => {
         const loadData = async() => {
             if(SockAuth && accessToken){
+                console.log(`sock auth`)
                 var accActivity = subscribeAccountActivity(PrincipalData);
                 dispatch(send(accActivity))
     

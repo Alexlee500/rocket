@@ -126,11 +126,13 @@ export default function AccountScreen() {
         }
         else{
             
+            
             let sum = item.positions.reduce((res, pos)=> {
                 if (pos.assetType == "OPTION"){
+                    console.log(`${pos.symbol} ${pos.longQuantity > pos.shortQuantity ? 'long' : 'short'} ${pos.averagePrice}`)
                     return {
                         purchaseVal:( res.purchaseVal ) + Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)), 
-                        currentVal:( res.currentVal ) + Number(allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity)) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]
+                        currentVal:( res.currentVal ) + Number( allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier] * (pos.longQuantity > pos.shortQuantity ? 1 : -1))
                     }
                 }
                 else return {
