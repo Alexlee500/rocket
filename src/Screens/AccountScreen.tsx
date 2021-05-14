@@ -78,7 +78,7 @@ export default function AccountScreen() {
     
     const parseValue = (val) => {
         return val ? (
-            '$'+ val
+            '$'+ val.toFixed(2)
         ):(
             '-'
         )
@@ -125,13 +125,17 @@ export default function AccountScreen() {
             )
         }
         else{
-            var testVar = 0;
-
             
             let sum = item.positions.reduce((res, pos)=> {
-                return {
+                if (pos.assetType == "OPTION"){
+                    return {
+                        purchaseVal:( res.purchaseVal ) + Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)), 
+                        currentVal:( res.currentVal ) + Number(allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity)) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]
+                    }
+                }
+                else return {
                     purchaseVal:( res.purchaseVal ) + Number(pos.averagePrice * (pos.longQuantity || pos.shortQuantity) * (allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]) * (pos.longQuantity > pos.shortQuantity ? 1 : -1)), 
-                    currentVal:( res.currentVal ) + Number(allEntities?.[pos.symbol]?.[optionFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity)) * allEntities?.[pos.symbol]?.[optionFieldMap.Multiplier]
+                    currentVal:( res.currentVal ) + Number(allEntities?.[pos.symbol]?.[quoteFieldMap.Mark] * (pos.longQuantity || pos.shortQuantity))
                 }
             }, {purchaseVal: 0, currentVal: 0})
 
@@ -148,7 +152,10 @@ export default function AccountScreen() {
                         subText={parseValuePercent(UnderlyingPercentDelta)}
                         subDirection={getDirection(UnderlyingPercentDelta)}
                     />                    
-                    <DataTable.MultiRowCell numeric mainText={`$${sum.currentVal.toFixed(2)}`} mainDirection={0} subText={parseValuePercent(totalPercentDelta)} subDirection={getDirection(totalPercentDelta)}/>
+                    <DataTable.MultiRowCell numeric 
+                        mainText={parseValue(sum.currentVal)} 
+                        subText={parseValuePercent(totalPercentDelta)} 
+                        subDirection={getDirection(totalPercentDelta)}/>
                     </DataTable.Row>
                 }>
                     {item.positions.map((sub) => {
