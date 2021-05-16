@@ -1,5 +1,3 @@
-import reduxWebsocket from '@giantmachines/redux-websocket';
-
 import { configureStore, getDefaultMiddleware, MiddlewareArray, combineReducers } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
 import rootReducer from './rootReducer'
@@ -7,6 +5,8 @@ import authReducer from './features/authSlice'
 import tdaReducer from './features/tdaSlice'
 import quoteReducer from './features/quoteSlice'
  
+//import reduxWebsocket from '@giantmachines/redux-websocket';
+import { ReduxWebsocket } from 'redux-websocket/ReduxWebsocket'
 /*
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -14,7 +14,7 @@ const rootReducer = combineReducers({
     quote: quoteReducer
 })*/
 
-const reduxWebsocketMiddleware  = reduxWebsocket({reconnectOnClose:false});
+const reduxWebsocketMiddleware  = ReduxWebsocket({reconnectOnClose:false});
 let store =  configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck:false}).concat(reduxWebsocketMiddleware)

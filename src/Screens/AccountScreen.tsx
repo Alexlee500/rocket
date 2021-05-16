@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { send, disconnect  } from '@giantmachines/redux-websocket';
+//import { send, disconnect  } from '@giantmachines/redux-websocket';
+import { connect, send } from 'redux-websocket/ReduxWebsocket'
+
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
@@ -27,6 +29,7 @@ export default function AccountScreen() {
     const [accountPositions, setAccountPositions] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
 
+
     useEffect(() => {
         const result = {};
         AccountData.securitiesAccount.positions.forEach((item) => {
@@ -34,7 +37,6 @@ export default function AccountScreen() {
             const { symbol, assetType, putCall, description} = item.instrument
             const underlyingSymbol = item.instrument.underlyingSymbol || symbol
             const quantity = shortQuantity || longQuantity
-            const longShort = shortQuantity || longQuantity ? 'short' : 'long'
             
 
             if (!result[underlyingSymbol]) {

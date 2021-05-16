@@ -29,8 +29,6 @@ interface tdaSlice{
     accountData: SecuritiesAccount
 }
 
-const quoteAdapter = createEntityAdapter({})
-
 
 const initialState = { 
     loginLoading: true,

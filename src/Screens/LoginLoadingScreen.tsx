@@ -3,7 +3,8 @@ import  {Text, View, ActivityIndicator } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 import { useDispatch, useSelector} from 'react-redux';
-import { connect, send  } from '@giantmachines/redux-websocket';
+//import { connect, send  } from '@giantmachines/redux-websocket';
+import { connect, send } from 'redux-websocket/ReduxWebsocket'
 import { parseISO } from 'date-fns'
 import { renameQuoteResponse, renameApiResponse } from '../api/AmeritradeHelper';
 import { upsertQuotes } from '../Redux/features/quoteSlice';
