@@ -9,8 +9,7 @@ import { selectWatchlist } from '../Redux/features/tdaSlice';
 import { quoteSelector } from '../Redux/features/quoteSlice';
 import { quoteFieldMap } from '../api/AmeritradeHelper';
 
-
-export default function WatchlistScreen() {
+export default function WatchlistScreen({navigation:{navigate}}) {
     const allEntities = useSelector(quoteSelector.selectEntities);
     const watchlists:Watchlists[] = useSelector( selectWatchlist )
 
@@ -104,21 +103,41 @@ export default function WatchlistScreen() {
         setSortConfig({ key, direction });
     };
 
+    const parseValue = (val) => {
+        return (!isNaN(val) && val != null) ? (
+            (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
+        ):(
+            '-'
+        )
+    }
 
+    const parseValuePercent = (val) => {
+        return (!isNaN(val) && val != null) ? (
+            (val>=0? '+':'') + val + '%'
+        ):(
+            '-'
+        )
+    }
+
+    const getDirection = (val) => {
+        if (val > 0) return 1;
+        if (val < 0) return -1;
+        return 0;
+    }
 
     const watchlistRows = watchlistSymbols.map((item) => {
-        let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Close] ) * 100).toFixed(2) || 0
-        //let percentDelta =  (((allEntities?.[item]?.[29])/allEntities?.[item]?.[quoteFieldMap.Mark] ) * 100).toFixed(2) || 0
-
-        //console.log(`${allEntities?.[item]?.[29]} - ${allEntities?.[item]?.[quoteFieldMap.Mark]}`)
+        let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Close] ) * 100).toFixed(2)
         
         return (
-            <DataTable.Row key={item}>
+            <DataTable.Row key={item} onPress={() => { navigate('Quote', {symbol:item})}}>
             <DataTable.Cell >{item}</DataTable.Cell>
             <DataTable.Cell numeric >
-                ${allEntities?.[item]?.[quoteFieldMap.Mark] || '0.00'}
+                {parseValue(allEntities?.[item]?.[quoteFieldMap.Mark])}
             </DataTable.Cell>
-            <DataTable.Cell numeric direction={(percentDelta>0 ? 1 : -1)}>{percentDelta>0?"+":""}{percentDelta}%</DataTable.Cell>
+            <DataTable.Cell numeric 
+                direction={getDirection(percentDelta)}>
+                    {parseValuePercent(percentDelta)}
+            </DataTable.Cell>
             </DataTable.Row>
         )
 

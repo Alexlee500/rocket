@@ -1,18 +1,43 @@
 import React from 'react';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AccountScreen from '../Screens/AccountScreen';
 import WatchlistScreen from '../Screens/WatchlistScreen';
+import QuoteScreen from '../Screens/QuoteScreen';
 
 import Colors from '../configs/Colors'
 
 const Tab = createMaterialBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function AppTabNavigator() {
     return (
-        <Tab.Navigator barStyle={{backgroundColor: Colors.SecondaryDark}}> 
+        <Stack.Navigator
+            headerMode="none"
+            screenOptions={{animationEnabled:false}}
+        >
+        <Stack.Screen
+            name="Tabs"
+            component={ tabScreens }
+        />
+        <Stack.Screen
+            name="Quote"
+            component={QuoteScreen}
+            initialParams={{symbol:''}}
+            />        
+        </Stack.Navigator>
+    )
+
+}
+
+function tabScreens(){
+    return (
+        <Tab.Navigator 
+            barStyle={{backgroundColor: Colors.SecondaryDark}}> 
             <Tab.Screen 
                 name="Watchlist" 
                 component={WatchlistScreen}
@@ -31,5 +56,4 @@ export default function AppTabNavigator() {
             />
         </Tab.Navigator>
     )
-
 }

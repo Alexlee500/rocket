@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-//import { send, disconnect  } from '@giantmachines/redux-websocket';
 import { connect, send } from 'redux-websocket/ReduxWebsocket'
 
 
@@ -79,7 +78,7 @@ export default function AccountScreen() {
     }
     
     const parseValue = (val) => {
-        return val ? (
+        return (!isNaN(val) && val != null) ? (
             (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
         ):(
             '-'
@@ -87,7 +86,7 @@ export default function AccountScreen() {
     }
 
     const parseValuePercent = (val) => {
-        return val ? (
+        return (!isNaN(val) && val != null) ? (
             (val>=0? '+':'') + val + '%'
         ):(
             '-'
@@ -123,7 +122,11 @@ export default function AccountScreen() {
     }, {currentVal: AccountData.securitiesAccount.initialBalances.cashBalance, purchaseVal: 0})
 
     const positionRows = accountPositions.map((item) => {
-        let UnderlyingPercentDelta:number = Number((((allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark]-allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close])/allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close] ) * 100).toFixed(2))|| null
+        let Mark = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark];
+        let Close = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Close];
+
+        let UnderlyingPercentDelta:number = Number((((Mark - Close) / Close) * 100).toFixed(2))
+
         if (item.positions.length == 1 && item.positions[0].assetType == 'EQUITY'){
             let currentVal:number = allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark] * item.positions[0].longQuantity;
             let purchaseVal:number = item.positions[0].averagePrice * item.positions[0].longQuantity
@@ -149,10 +152,8 @@ export default function AccountScreen() {
             )
         }
         else{
-            
-            
-            let sum = item.positions.reduce(reducePositions, {purchaseVal: 0, currentVal: 0})
 
+            let sum = item.positions.reduce(reducePositions, {purchaseVal: 0, currentVal: 0})
             let totalPercentDelta: number = Number((((sum.currentVal-sum.purchaseVal)/sum.purchaseVal)*100).toFixed(2))
 
             return (
