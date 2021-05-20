@@ -73,7 +73,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         
         const yScale = scaleLinear()
             .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
-            .range([10, 200])
+            .range([200, 10])
 
         
         let points = dataArr?.map((item) => {
@@ -84,14 +84,21 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         let final = points?.reduce((res, item) =>{
             return `${res} ${item}`
         }, '')
-
+        //const path = new Path(final)
         return (
+            
             <Polyline 
             points={final}
             fill="none"
             stroke={getDirection(percentDelta) != 0 ? (getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
             strokeWidth="2"
-        />
+            />
+            /*
+            <path 
+            d={final}
+            strokeWidth="2"
+            stroke={getDirection(percentDelta) != 0 ? (getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
+            />*/
         )
     }
 
