@@ -86,7 +86,6 @@ export const tdaSlice = createSlice({
             state.socketAuthenticated = initialState.socketAuthenticated;
             state.socketConnected = initialState.socketConnected;
 
-            console.log(action);
         })       
         .addCase(REDUX_WEBSOCKET_SEND, (state, action:WebsocketSend) => {
             console.log('sock send');

@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@alexlee500/redux-websocket": "https://github.com/Alexlee500/redux-websocket.git",
     "@giantmachines/redux-websocket": "^1.5.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-picker/picker": "^1.15.0",
@@ -19,6 +20,7 @@
     "@react-navigation/stack": "^5.14.4",
     "@reduxjs/toolkit": "^1.5.1",
     "add": "^2.0.6",
+    "d3": "^6.7.0",
     "date-fns": "^2.21.1",
     "expo-local-authentication": "^10.0.0",
     "expo-secure-store": "^10.0.0",
@@ -37,7 +39,6 @@
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.3",
     "redux-socket.io": "^1.4.0",
-    "redux-websocket": "https://github.com/Alexlee500/redux-websocket.git",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
     "ws": "^7.4.5",

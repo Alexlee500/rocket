@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { useDispatch, useSelector} from 'react-redux';
 //import { connect, send  } from '@giantmachines/redux-websocket';
-import { connect, send } from 'redux-websocket/ReduxWebsocket'
+import { connect, send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 import { parseISO } from 'date-fns'
 import { renameQuoteResponse, renameApiResponse } from '../api/AmeritradeHelper';
 import { upsertQuotes } from '../Redux/features/quoteSlice';
@@ -25,6 +25,7 @@ import { selectSocketConnected,
         setWatchlistData,
         selectWatchlist,
         setAccountData,
+        setAccessToken as reduxSetAccessToken,
         selectAccountData
         } from '../Redux/features/tdaSlice'
 
@@ -50,7 +51,6 @@ export default function LoginLoadingScreen() {
             let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
             if (refToken){
                 setRefreshToken(refToken);
-                console.log(refToken)
             }
 
             //AcsToken = await tda.getAccessFromRefreshToken(await refToken);
@@ -76,6 +76,7 @@ export default function LoginLoadingScreen() {
                 console.log(`has refresh`)
                 let aT = await tda.getAccessFromRefreshToken(refreshToken)
                 setAccessToken(aT)
+                dispatch(reduxSetAccessToken(aT));
             }
         }
         hasRefreshToken()

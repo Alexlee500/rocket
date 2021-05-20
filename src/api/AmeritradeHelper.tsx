@@ -14,6 +14,32 @@ export const optionFieldMap = {
     Mark: "41"
 }
 
+export const candleFieldMap = {
+    key:"0",
+    Open:"1",
+    High:"2",
+    Low:"3",
+    Close:"4",
+    Volume:"5",
+    Sequence:"6",
+    Time:"7"
+}
+
+export const renameChartCandles = (res) => {
+    console.log(res)
+    let renamedCandleChart = res.candles.map((item)=> {
+        return {
+            1: item.open,
+            2: item.high,
+            3: item.low,
+            4: item.close,
+            5: item.volume,
+            
+            7: item.datetime
+        }
+    })
+    return renamedCandleChart;
+}
 export const renameQuoteResponse = (initialResponse) => {
     let renamedQuoteData = Object.keys(initialResponse).map((item) => {
         return {
@@ -72,3 +98,4 @@ export const renameApiResponse = (res) => {
     })
     return renamed
 }
+

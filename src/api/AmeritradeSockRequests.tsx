@@ -127,3 +127,21 @@ export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols) => {
     }
     return subRequest
 }
+
+export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol) => {
+    var subRequest = {
+        "requests": [{
+            "service": "CHART_HISTORY_FUTURES",
+            "requestid": "2",
+            "command": "GET",
+            "account": PrincipalData.accounts[0].accountId,
+            "source": AmeritradeConf.clientId,
+            "parameters": {
+                "symbol": symbol,
+                "frequency": "m30",
+                "period": "d5"
+            }
+        }]
+    }
+    return subRequest
+}

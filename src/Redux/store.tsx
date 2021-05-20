@@ -6,7 +6,7 @@ import tdaReducer from './features/tdaSlice'
 import quoteReducer from './features/quoteSlice'
  
 //import reduxWebsocket from '@giantmachines/redux-websocket';
-import { ReduxWebsocket } from 'redux-websocket/ReduxWebsocket'
+import { ReduxWebsocket } from '@alexlee500/redux-websocket/ReduxWebsocket'
 /*
 const rootReducer = combineReducers({
     auth: authReducer,

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { connect, send } from 'redux-websocket/ReduxWebsocket'
+import { connect, send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
-import { quoteFieldMap, optionFieldMap, renameOptionResponse } from '../api/AmeritradeHelper';
+import { quoteFieldMap, optionFieldMap } from '../api/AmeritradeHelper';
 
 import { deauthenticate } from '../Redux/features/authSlice';
 import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
@@ -62,6 +62,7 @@ export default function AccountScreen() {
             }));
         setAccountPositions(final)
     }, [AccountData])
+
     let printDebug = () => {
         console.log(JSON.stringify(allEntities))
     }

@@ -129,5 +129,17 @@ export async function getQuotes(accessToken: string, quotes: string[]) : Promise
     })
     var resJson:any = await res.json();
     return resJson
-
 }
+
+export async function getChartHistory (accessToken:string, symbol:string, periodType:string, period:string, frequencyType:string, frequency:string, extendedHours:boolean = false) {
+    const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory?periodType=${periodType}&period=${period}&frequencyType=${frequencyType}&frequency=${frequency}&needExtendedHoursData=${extendedHours}`
+    var res = await fetch(resourceUrl, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+
+    var resJson:any = await res.json();
+    return resJson;
+    
+} 

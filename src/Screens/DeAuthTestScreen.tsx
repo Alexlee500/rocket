@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import  {Text, View, Button } from 'react-native';
 import { BarChart, Grid } from 'react-native-svg-charts'
 //import { connect, send  } from '@giantmachines/redux-websocket';
-import { connect, send } from 'redux-websocket/ReduxWebsocket'
+import { connect, send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 
 import { parseISO } from 'date-fns'
 
