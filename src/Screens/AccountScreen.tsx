@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { connect, send } from '@alexlee500/redux-websocket/ReduxWebsocket'
+import { connect, send, disconnect } from '@alexlee500/redux-websocket/ReduxWebsocket'
 
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';
@@ -10,7 +10,7 @@ import { quoteFieldMap, optionFieldMap } from '../api/AmeritradeHelper';
 
 import { deauthenticate } from '../Redux/features/authSlice';
 import { Appbar, List, Card, Title, Paragraph, Menu} from 'react-native-paper';
-
+import * as cdUtils from '../utils/ChartDataUtils'
 
 import Colors from '../configs/Colors'
 import  DataTable from '../Components/DataTable/DataTable'
@@ -77,29 +77,6 @@ export default function AccountScreen() {
         }
         logout();
     }
-    
-    const parseValue = (val) => {
-        return (!isNaN(val) && val != null) ? (
-            (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
-        ):(
-            '-'
-        )
-    }
-
-    const parseValuePercent = (val) => {
-        return (!isNaN(val) && val != null) ? (
-            (val>=0? '+':'') + val + '%'
-        ):(
-            '-'
-        )
-    }
-
-    const getDirection = (val) => {
-        if (val > 0) return 1;
-        if (val < 0) return -1;
-        return 0;
-    }
-
 
     const reducePositions = (sum, pos) => {
         if (pos.assetType == "OPTION"){
@@ -140,14 +117,14 @@ export default function AccountScreen() {
                     subDirection={(item.positions[0].shortQuantity > item.positions[0].longQuantity ? -1 : 1)}
                 />
                 <DataTable.MultiRowCell numeric
-                    mainText={parseValue(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
-                    subText={parseValuePercent(UnderlyingPercentDelta)}
-                    subDirection={getDirection(UnderlyingPercentDelta)}
+                    mainText={cdUtils.valueToString(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
+                    subText={cdUtils.percentToString(UnderlyingPercentDelta)}
+                    subDirection={cdUtils.getDirection(UnderlyingPercentDelta)}
                 />   
                 <DataTable.MultiRowCell numeric
-                    mainText={parseValue(currentVal)}
-                    subText={parseValuePercent(netPercentDelta)}
-                    subDirection={getDirection(netPercentDelta)}
+                    mainText={cdUtils.valueToString(currentVal)}
+                    subText={cdUtils.percentToString(netPercentDelta)}
+                    subDirection={cdUtils.getDirection(netPercentDelta)}
                 />                 
                 </DataTable.Row>
             )
@@ -164,19 +141,18 @@ export default function AccountScreen() {
                     <DataTable.Row key={0} >
                     <DataTable.Cell>{item.underlyingSymbol}</DataTable.Cell>
                     <DataTable.MultiRowCell numeric
-                        mainText={parseValue(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
-                        subText={parseValuePercent(UnderlyingPercentDelta)}
-                        subDirection={getDirection(UnderlyingPercentDelta)}
+                        mainText={cdUtils.valueToString(allEntities?.[item.underlyingSymbol]?.[quoteFieldMap.Mark])}
+                        subText={cdUtils.percentToString(UnderlyingPercentDelta)}
+                        subDirection={cdUtils.getDirection(UnderlyingPercentDelta)}
                     />                    
                     <DataTable.MultiRowCell numeric 
-                        mainText={parseValue(sum.currentVal)} 
-                        subText={parseValuePercent(totalPercentDelta)} 
-                        subDirection={getDirection(totalPercentDelta)}/>
+                        mainText={cdUtils.valueToString(sum.currentVal)} 
+                        subText={cdUtils.percentToString(totalPercentDelta)} 
+                        subDirection={cdUtils.getDirection(totalPercentDelta)}/>
                     </DataTable.Row>
                 }>
                     {item.positions.map((sub) => {
                         let OptionPercentDelta = (((allEntities?.[sub.symbol]?.[optionFieldMap.Mark]-allEntities?.[sub.symbol]?.[optionFieldMap.Close])/allEntities?.[sub.symbol]?.[optionFieldMap.Close] ) * 100 * (sub.longQuantity > sub.shortQuantity ? 1 : -1)).toFixed(2) || 0
-                        //console.log(JSON.stringify(sub))
 
                         if (sub.assetType == 'EQUITY'){
                             <DataTableRow key={`${item.underlyingSymbol}_${sub.symbol}`}>
@@ -188,25 +164,23 @@ export default function AccountScreen() {
                             let currentVal:number = Number(allEntities?.[sub.symbol]?.[optionFieldMap.Mark] * (sub.longQuantity || sub.shortQuantity) * allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]  * (sub.longQuantity > sub.shortQuantity ? 1 : -1))
                             let purchaseVal:number = Number(sub.averagePrice * (sub.longQuantity || sub.shortQuantity) * (allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]) * (sub.longQuantity > sub.shortQuantity ? 1 : -1)) 
                             let netPercentDelta: number = Number((((currentVal-purchaseVal)/purchaseVal)*100).toFixed(2))
-                            //console.log(`${sub.symbol} ${allEntities?.[sub.symbol]?.[optionFieldMap.Mark]} * ${(sub.longQuantity || sub.shortQuantity)} * ${allEntities?.[sub.symbol]?.[optionFieldMap.Multiplier]}`)
-                            //console.log(`${sub.symbol} ${currentVal} - ${purchaseVal}`)
                             return (
                             <DataTable.Row key={`${item.underlyingSymbol}_${sub.symbol}`}>
                             <DataTable.MultiRowCell 
                                 mainText={sub.description}
-                                subText={(sub.longQuantity > sub.shortQuantity ?'+' : '-') + (sub.shortQuantity || sub.longQuantity)}
+                                subText={(sub.longQuantity > sub.shortQuantity ?'+' : '-') + cdUtils.formatNumberString(sub.shortQuantity || sub.longQuantity)}
                                 subDirection={sub.longQuantity > sub.shortQuantity ? 1: -1}
                             />
                             <DataTable.MultiRowCell numeric
-                                mainText={parseValue(allEntities?.[sub.symbol]?.[optionFieldMap.Mark])}
-                                subText={parseValuePercent(OptionPercentDelta)}
-                                subDirection={getDirection(OptionPercentDelta)}
+                                mainText={cdUtils.valueToString(allEntities?.[sub.symbol]?.[optionFieldMap.Mark])}
+                                subText={cdUtils.percentToString(OptionPercentDelta)}
+                                subDirection={cdUtils.getDirection(OptionPercentDelta)}
                             /> 
                             <DataTable.MultiRowCell numeric
-                                mainText={parseValue(currentVal)}
-                                mainDirection={getDirection(currentVal)}
-                                subText={parseValuePercent(netPercentDelta)}
-                                subDirection={getDirection(netPercentDelta)}
+                                mainText={cdUtils.valueToString(currentVal)}
+                                mainDirection={cdUtils.getDirection(currentVal)}
+                                subText={cdUtils.percentToString(netPercentDelta)}
+                                subDirection={cdUtils.getDirection(netPercentDelta)}
                             /> 
                             </DataTable.Row>
                         )}
@@ -254,7 +228,7 @@ export default function AccountScreen() {
             <Card>
                 <Card.Title title="Account Value"/>
                 <Card.Content>
-                    <Title>${accountValues.currentVal}</Title>
+                    <Title>{cdUtils.valueToString(accountValues.currentVal)}</Title>
                     <Paragraph>+1000%</Paragraph>
                 </Card.Content>
             </Card>

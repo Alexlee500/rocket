@@ -17,6 +17,7 @@ import { quoteSelector } from '../Redux/features/quoteSlice'
 import { getChartHistory } from '../api/AmeritradeApi'
 import Colors from '../configs/Colors'
 import { renameChartCandles, candleFieldMap, quoteFieldMap } from '../api/AmeritradeHelper';
+import * as ChartUtils from '../utils/ChartDataUtils'
 
 export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const dispatch = useDispatch();
@@ -25,7 +26,6 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const AccessToken:any = useSelector( selectAccessToken )
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
-    const [LinePoints, setLinePoints] = React.useState('');
 
     useEffect(() => {
         onLoad();
@@ -47,60 +47,22 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         }
     }, [])
 
-    //console.log(`chart data ${JSON.stringify(chartData)}`)
 
-    /*
-    const linePoints = () => {
-        let points = ChartX.map((item) => {
-            return `${item},${chartData[item][candleFieldMap.Close]}`
-        })
-        let final = points.reduce((res, item) =>{
-            return `${res} ${item}`
-        })
-        
-        setLinePoints(final)
-    }
-    */
-
-
-    const buildGraphPath = () => {
-        let dataArr = Object.values(chartData)
-
-        const xScale = scaleLinear()
-            .domain(d3.extent(dataArr, s => s[candleFieldMap.Time]))
-            .range([10, Dimensions.get('window').width -10])
-
-        const yScale = scaleLinear()
-            .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
-            .range([10, 200])
-
-            /*
-        let p = parse(
-            shape
-            .line()
-            .x(([,x]) => xScale(x) as number)
-            .y(([y]) => yScale(y) as number)
-            .curve(shape.curveBasis()))
-*/
-        
-        //console.log(p)  
-    }
     const buildGraphLine = () => {
-        let dataArr = Object.values(chartData)
-        //let xTimes = Object.keys(chartData)
-       // xTimes.sort( (a,b) => {return a-b} );
-        //let yPrice = xTimes.map((item) => chartData[item]["4"])
-        
+        let dataArr = Object.values(chartData).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
 
         
         const xScale = scaleLinear()
             .domain(d3.extent(dataArr, s => s[candleFieldMap.Time]))
             .range([10, Dimensions.get('window').width -10])
         
+        const xScale2 = scaleLinear()
+            .domain([0, dataArr.length])
+            .range([10, Dimensions.get('window').width -10])
         
         const yScale = scaleLinear()
             .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
-            .range([200, 10])
+            .range([400, 10])
 
         
 
@@ -111,12 +73,17 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         let points = dataArr?.map((item) => {
             return `${xScale(item[candleFieldMap.Time])},${yScale(item[candleFieldMap.Close])}`
         })
-        //console.log(points)
-        
+
+
+        let timeSkipVals = dataArr.map(
+            (item, idx ) => [parseFloat(xScale2(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
+        )
+
+
         let final = points?.reduce((res, item) =>{
             return `${res} ${item}`
         }, '')
-        //const path = new Path(final)
+
 
 
         const s = shape
@@ -125,28 +92,23 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         .y(([,y]) => y as number)
         .curve(shape.curveBasis)(formattedVals) as string
 
-        
-        //console.log(s)
-        //const p = parse(s)
-        //console.log(p)
+        const s2 = shape
+        .line()
+        .x(([x]) => x as number)
+        .y(([,y]) => y as number)
+        .curve(shape.curveBasis)(timeSkipVals) as string
+
 
         return (
             
-            /*
-            <Polyline 
-            points={final}
-            fill="none"
-            stroke={getDirection(percentDelta) != 0 ? (getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
+           
+            <Path 
+            d={s2}
             strokeWidth="2"
-            />*/
-            <Path
-                d={s}
-                strokeWidth="2"
-                stroke={getDirection(percentDelta) != 0 ? (getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
-                fill="none"
-
+            stroke={ChartUtils.getDirection(percentDelta) != 0 ? (ChartUtils.getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
             />
-            
+
+      
             /*
             <path 
             d={final}
@@ -156,30 +118,10 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         )
     }
 
-    const parseValue = (val) => {
-        return (!isNaN(val) && val != null) ? (
-            (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
-        ):(
-            '-'
-        )
-    }
+    //let percentDelta:number = Number((((quoteData[quoteFieldMap.Mark] - quoteData[quoteFieldMap.Close]) / quoteData[quoteFieldMap.Close]) * 100).toFixed(2))
+    let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
+    let percentDeltaDir:number = ChartUtils.getDirection(percentDelta);
 
-    const parseValuePercent = (val) => {
-        return (!isNaN(val) && val != null) ? (
-            (val>=0? '+':'') + val + '%'
-        ):(
-            '-'
-        )
-    }
-
-    const getDirection = (val) => {
-        if (val > 0) return 1;
-        if (val < 0) return -1;
-        return 0;
-    }
-
-    let percentDelta:number = Number((((quoteData[quoteFieldMap.Mark] - quoteData[quoteFieldMap.Close]) / quoteData[quoteFieldMap.Close]) * 100).toFixed(2))
-    
     return (
         <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
             <Appbar.Header
@@ -192,9 +134,9 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             <Appbar.Content title={Symbol}/>
             </Appbar.Header>
             <ScrollView>
-            <Text>debug mark: {parseValue(quoteData[quoteFieldMap.Mark])}</Text>
-            <Text>debug delta: {parseValuePercent(percentDelta)}</Text>
-            <Svg width= {Dimensions.get('window').width} height="250">
+            <Text>debug mark: {ChartUtils.valueToString(quoteData[quoteFieldMap.Mark])}</Text>
+            <Text>debug delta: {ChartUtils.percentToString(percentDelta)}</Text>
+            <Svg width= {Dimensions.get('window').width} height="400">
                 <G>        
                     {buildGraphLine()}  
                      

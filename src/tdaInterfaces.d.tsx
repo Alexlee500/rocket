@@ -117,7 +117,8 @@ declare interface SecuritiesAccount{
         isClosingOnlyRestricted: boolean,
         positions: Position[],
         initialBalances:{
-        accountValue: number
+            accountValue: number,
+            cashBalance: number
         }
     }
 }

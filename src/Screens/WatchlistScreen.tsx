@@ -8,6 +8,7 @@ import Colors from '../configs/Colors'
 import { selectWatchlist } from '../Redux/features/tdaSlice';
 import { quoteSelector } from '../Redux/features/quoteSlice';
 import { quoteFieldMap } from '../api/AmeritradeHelper';
+import * as cdUtils from '../utils/ChartDataUtils'
 
 export default function WatchlistScreen({navigation:{navigate}}) {
     const allEntities = useSelector(quoteSelector.selectEntities);
@@ -21,7 +22,6 @@ export default function WatchlistScreen({navigation:{navigate}}) {
     useEffect(() => {
 
         const getSelectedWatchlistSymbols = () => {
-            console.log(`getSelectedWatchlistSymbols`)
 
             let symList = watchlists[selectedWatchlist].watchlistItems.map((item) => {
                 return item.instrument.symbol
@@ -72,12 +72,11 @@ export default function WatchlistScreen({navigation:{navigate}}) {
                 return 0
                 })
             }
-            console.log(sortable)
             return sortable
         }
         let res = sortWatchlist()
         setWatchlistSymbols(res);
-    }, [watchlists, selectedWatchlist, sortConfig])
+    }, [watchlists, selectedWatchlist, sortConfig, allEntities])
 
 
     let watchlistMenuItem = watchlists.map((myValue, myIndex) => {
@@ -91,7 +90,7 @@ export default function WatchlistScreen({navigation:{navigate}}) {
         )
     })
 
-    const requestSort = (key) => {
+    const requestSort = (key:string) => {
         let direction = 'ascending';
         if (
           sortConfig &&
@@ -103,7 +102,7 @@ export default function WatchlistScreen({navigation:{navigate}}) {
         setSortConfig({ key, direction });
     };
 
-    const parseValue = (val) => {
+    const parseValue = (val:number) => {
         return (!isNaN(val) && val != null) ? (
             (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
         ):(
@@ -126,17 +125,17 @@ export default function WatchlistScreen({navigation:{navigate}}) {
     }
 
     const watchlistRows = watchlistSymbols.map((item) => {
-        let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Close] ) * 100).toFixed(2)
-        
+        //let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Close] ) * 100).toFixed(2)
+        const percentDelta = cdUtils.percentDelta(allEntities?.[item]?.[quoteFieldMap.Close], allEntities?.[item]?.[quoteFieldMap.Mark])
         return (
             <DataTable.Row key={item} onPress={() => { navigate('Quote', {symbol:item})}}>
             <DataTable.Cell >{item}</DataTable.Cell>
             <DataTable.Cell numeric >
-                {parseValue(allEntities?.[item]?.[quoteFieldMap.Mark])}
+                {cdUtils.valueToString(allEntities?.[item]?.[quoteFieldMap.Mark])}
             </DataTable.Cell>
             <DataTable.Cell numeric 
-                direction={getDirection(percentDelta)}>
-                    {parseValuePercent(percentDelta)}
+                direction={cdUtils.getDirection(percentDelta)}>
+                    {cdUtils.percentToString(percentDelta)}
             </DataTable.Cell>
             </DataTable.Row>
         )

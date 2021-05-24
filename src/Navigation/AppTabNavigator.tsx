@@ -23,11 +23,13 @@ export default function AppTabNavigator() {
         <Stack.Screen
             name="Tabs"
             component={ tabScreens }
+            options={{animationEnabled:false}}
         />
         <Stack.Screen
             name="Quote"
             component={QuoteScreen}
             initialParams={{symbol:''}}
+            options={{animationEnabled:false}}
             />        
         </Stack.Navigator>
     )
@@ -42,6 +44,7 @@ function tabScreens(){
                 name="Watchlist" 
                 component={WatchlistScreen}
                 options={{
+                    
                     tabBarIcon: () => (
                         <MaterialCommunityIcons name="playlist-star" color={Colors.TextLight} size={26}/> )
                 }}
