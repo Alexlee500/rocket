@@ -7,8 +7,7 @@ import { Svg, G, Path , Polyline } from 'react-native-svg'
 import * as d3 from "d3";
 import * as shape from "d3-shape";
 import { scaleLinear } from "d3-scale";
-import { mixPath, parse } from "react-native-redash";
-
+import { getTime, endOfToday } from 'date-fns'
 
 import { ChartEquityRequest, ChartHistoryRequest} from '../api/AmeritradeSockRequests';
 import { selectAccessToken, selectUserPrincipals } from '../Redux/features/tdaSlice'
@@ -31,6 +30,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         onLoad();
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
+            const eod = getTime(endOfToday());
             let candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "5", true);
             candleData = renameChartCandles(candleData)
 

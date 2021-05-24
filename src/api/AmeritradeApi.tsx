@@ -1,9 +1,7 @@
-import {authorize, prefetchConfiguration, AuthConfiguration} from 'react-native-app-auth';
-import * as SecureStore from 'expo-secure-store';
+import {authorize, AuthConfiguration} from 'react-native-app-auth';
+import { getTime, endOfToday } from 'date-fns'
 
 import AmeritradeConf from '../configs/AmeritradeConf'
-import SecureStoreVars from '../vars/SecureStoreVars';
-
 
 
 export async function oauthApiLogin() : Promise<AccessToken> {
@@ -131,8 +129,25 @@ export async function getQuotes(accessToken: string, quotes: string[]) : Promise
     return resJson
 }
 
-export async function getChartHistory (accessToken:string, symbol:string, periodType:string, period:string, frequencyType:string, frequency:string, extendedHours:boolean = false) {
-    const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory?periodType=${periodType}&period=${period}&frequencyType=${frequencyType}&frequency=${frequency}&needExtendedHoursData=${extendedHours}`
+export async function getChartHistory ( accessToken:string, 
+                                        symbol:string, 
+                                        periodType:string, 
+                                        period:string, 
+                                        frequencyType:string, 
+                                        frequency:string,
+                                        extendedHours:boolean = false,
+                                        startDate?:number,
+                                        endDate:number = getTime(endOfToday())) {
+
+    const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory?
+                            periodType=${periodType}
+                            &period=${period}
+                            &frequencyType=${frequencyType}
+                            &frequency=${frequency}
+                            &needExtendedHoursData=${extendedHours}
+                            &endDate=${endDate}`
+
+                            
     var res = await fetch(resourceUrl, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
