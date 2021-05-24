@@ -63,8 +63,10 @@ type Props = $RemoveChildren<typeof TouchableRipple> & {
       {...rest}
       style={[styles.container, numeric && styles.right, style]}
     >
-      <Text numberOfLines={1}  style={ 
-        direction? ( (direction == 1) ? {color:Colors.Green} : {color:Colors.Red} ) : {}}>{children}</Text>
+      <Text numberOfLines={1}  style={[
+        styles.mainText,
+        direction? ( (direction == 1) ? {color:Colors.Green} : {color:Colors.Red} ) : {}
+        ]}>{children}</Text>
     </TouchableRipple>
   );
   
@@ -76,7 +78,9 @@ type Props = $RemoveChildren<typeof TouchableRipple> & {
       flexDirection: 'row',
       alignItems: 'center',
     },
-  
+    mainText:{
+      fontSize:16
+    },
     right: {
       justifyContent: 'flex-end',
     },

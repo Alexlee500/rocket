@@ -167,7 +167,7 @@ export default function AccountScreen() {
                             return (
                             <DataTable.Row key={`${item.underlyingSymbol}_${sub.symbol}`}>
                             <DataTable.MultiRowCell 
-                                mainText={sub.description}
+                                mainText={cdUtils.formatOptionTitle(sub.description, item.underlyingSymbol)}
                                 subText={(sub.longQuantity > sub.shortQuantity ?'+' : '-') + cdUtils.formatNumberString(sub.shortQuantity || sub.longQuantity)}
                                 subDirection={sub.longQuantity > sub.shortQuantity ? 1: -1}
                             />

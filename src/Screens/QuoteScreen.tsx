@@ -43,7 +43,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             }
             dispatch(setChart(chart))
             let keys = Object.keys(chartData)
-            keys.sort( (a,b) => {return a-b} );
+            keys.sort( (a:any,b:any) => {return a-b} );
         }
     }, [])
 
