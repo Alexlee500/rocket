@@ -22,7 +22,4 @@ export const valueToString = (val) => {
 
 export const formatNumberString = (val) => val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 
-export const formatOptionTitle = (option, underlying) => {
-    console.log(`${option} ${underlying}`)
-    return option.replace(underlying+' ', '') 
-}
+export const formatOptionTitle = (option, underlying) => option.replace(underlying+' ', '')
