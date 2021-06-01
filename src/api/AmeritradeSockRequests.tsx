@@ -1,4 +1,5 @@
 import { parseISO } from 'date-fns'
+import { getTime, endOfToday } from 'date-fns'
 
 import AmeritradeConf from '../configs/AmeritradeConf'
 
@@ -128,18 +129,20 @@ export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols) => {
     return subRequest
 }
 
-export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol) => {
+export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol, frequency, period) => {
+    console.log('chart history request')
     var subRequest = {
         "requests": [{
             "service": "CHART_HISTORY_FUTURES",
-            "requestid": "2",
+            "requestid": "3",
             "command": "GET",
             "account": PrincipalData.accounts[0].accountId,
             "source": AmeritradeConf.clientId,
             "parameters": {
                 "symbol": symbol,
-                "frequency": "m30",
-                "period": "d5"
+                "frequency": "m1",
+                "period": "d5",
+                "END_TIME": getTime(endOfToday())
             }
         }]
     }

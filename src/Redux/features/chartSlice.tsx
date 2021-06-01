@@ -30,15 +30,17 @@ const candlesAdapter = createEntityAdapter<Candles>({
     sortComparer: (a, b) => a[7] - b[7]
 })
 
-const chartSlice = createSlice({
-    name:'charts',
-    initialState: candlesAdapter.getInitialState({
+const initialState = candlesAdapter.getInitialState({
         symbol: '',
         periodType:'day',
         period:'10',
         frequencyType:'minute',
         frequency:'1'
-    }),
+    })
+
+const chartSlice = createSlice({
+    name:'charts',
+    initialState,
     reducers:{
         setChart(state, action){
             state.symbol = action.payload.symbol
@@ -50,15 +52,17 @@ const chartSlice = createSlice({
         },
         upsertChart(state, action){
             candlesAdapter.upsertMany(state, action.payload)
-        }
+        },
+        resetChart: state => initialState
+
     },
     extraReducers:(builder) => {
         builder
         .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
+
             try{
                 let MessageData = JSON.parse(action.payload.event.data);
                 let response = MessageData?.data[0]
-
                 if (response?.service == "CHART_EQUITY"){
                     let candle = response.content
                     console.log(`new candle ${JSON.stringify(candle)}`)
@@ -78,12 +82,23 @@ const chartSlice = createSlice({
                             break
                         }
                     }
-
                 }
 
-            }catch{
 
+
+            }catch{ }
+            try{
+                let MessageData = JSON.parse(action.payload.event.data);
+                let snapshot = MessageData?.snapshot[0]
+                console.log(`snapshot ${snapshot}`)
+                if (snapshot?.service == "CHART_HISTORY_FUTURES"){
+                    console.log(snapshot)
+                    let content = snapshot.content[0];
+                    let chartCandles = content["3"];
+                    console.log(`chart candles ${JSON.stringify(chartCandles)}`)
+                }
             }
+            catch{}
         })
     }
 })
@@ -94,7 +109,8 @@ export const chartSelector = candlesAdapter.getSelectors<RootState>(
 
 export const {
     upsertChart,
-    setChart
+    setChart,
+    resetChart
 } = chartSlice.actions
 
 export default chartSlice.reducer

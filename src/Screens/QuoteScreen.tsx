@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { ScrollView, View, Dimensions } from "react-native"
-import { Appbar, List, Card, Title, Paragraph, Menu, Text} from 'react-native-paper';
+import { ScrollView, StyleSheet, View, Dimensions } from "react-native"
+import { Appbar, List, Card, Title, Paragraph, Menu, Text, ToggleButton} from 'react-native-paper';
 import { useDispatch, useSelector} from 'react-redux';
 import { send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 import { Svg, G, Path , Polyline } from 'react-native-svg'
@@ -11,41 +11,83 @@ import { getTime, endOfToday } from 'date-fns'
 
 import { ChartEquityRequest, ChartHistoryRequest} from '../api/AmeritradeSockRequests';
 import { selectAccessToken, selectUserPrincipals } from '../Redux/features/tdaSlice'
-import { chartSelector, setChart } from '../Redux/features/chartSlice'
+import { chartSelector, setChart, resetChart } from '../Redux/features/chartSlice'
 import { quoteSelector } from '../Redux/features/quoteSlice'
 import { getChartHistory } from '../api/AmeritradeApi'
 import Colors from '../configs/Colors'
 import { renameChartCandles, candleFieldMap, quoteFieldMap } from '../api/AmeritradeHelper';
 import * as ChartUtils from '../utils/ChartDataUtils'
+import {Chart} from '../Components/Chart/Chart'
+import ToggleButtonText from '../Components/ToggleButtonText/ToggleButtonText';
+import ToggleButtonRow from '../Components/ToggleButtonRow/ToggleButtonRow';
 
 export default function QuoteScreen ( {navigation: {goBack}, route} ) {
+    const defaultChartPeriod = '1D'
+
     const dispatch = useDispatch();
     const chartData = useSelector(chartSelector.selectEntities)
     const quoteData = useSelector(quoteSelector.selectEntities)[route.params.symbol]
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const AccessToken:any = useSelector( selectAccessToken )
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
+    const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
+
 
     useEffect(() => {
         onLoad();
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
-            const eod = getTime(endOfToday());
-            let candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "5", true);
-            candleData = renameChartCandles(candleData)
-
-            let chart = {
-                candles: candleData,
-                periodType: 'day',
-                period: '5',
-                frequencyType: 'minute',
-                frequency: '30'
-            }
-            dispatch(setChart(chart))
-            let keys = Object.keys(chartData)
-            keys.sort( (a:any,b:any) => {return a-b} );
+            //dispatch(send(ChartHistoryRequest(PrincipalData, Symbol, 'm1', 'd1')))
         }
     }, [])
+
+    useEffect(() => {
+        onChartPeriodChange();
+        async function onChartPeriodChange() {
+            let candleData
+            switch (chartPeriod){
+                case '1D':
+                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "5", true);
+                    break;
+                case '1W':
+                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "5", "minute", "30", true);
+                    break;
+                case '1M':
+                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "month", "1", "daily", "1", false);
+                    break;
+                case '1Y':
+                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "year", "1", "daily", "1", true);
+                    break;
+                case 'YTD':
+                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "ytd", "1", "daily", "1", true);
+                    break;
+            }
+             
+            try{            
+                candleData = renameChartCandles(candleData)
+                let chart = {
+                    candles: candleData,
+                    periodType: 'day',
+                    period: '5',
+                    frequencyType: 'minute',
+                    frequency: '30'
+                }
+                dispatch(setChart(chart))
+                let keys = Object.keys(chartData)
+                keys.sort( (a:any,b:any) => {return a-b} );
+            }catch(e){
+                console.log(e)
+            }
+
+        }
+
+    }, [chartPeriod])
+
+
+    const onGoBack = () => {
+        dispatch(resetChart());
+        goBack()
+    }
 
 
     const buildGraphLine = () => {
@@ -100,28 +142,17 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
 
         return (
-            
-           
             <Path 
             d={s2}
             strokeWidth="2"
             stroke={ChartUtils.getDirection(percentDelta) != 0 ? (ChartUtils.getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
             />
-
-      
-            /*
-            <path 
-            d={final}
-            strokeWidth="2"
-            stroke={getDirection(percentDelta) != 0 ? (getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
-            />*/
         )
     }
 
     //let percentDelta:number = Number((((quoteData[quoteFieldMap.Mark] - quoteData[quoteFieldMap.Close]) / quoteData[quoteFieldMap.Close]) * 100).toFixed(2))
     let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
-    let percentDeltaDir:number = ChartUtils.getDirection(percentDelta);
-
+    //let percentDeltaDir:number = ChartUtils.getDirection(percentDelta);
     return (
         <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
             <Appbar.Header
@@ -139,10 +170,30 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             <Svg width= {Dimensions.get('window').width} height="400">
                 <G>        
                     {buildGraphLine()}  
-                     
                 </G>
-                </Svg>
+            </Svg>
+            <ToggleButton.Row style={[styles.row]} onValueChange={value => setPeriod(value)} value={chartPeriod}>
+                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1D">1D</ToggleButtonText>
+                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1W">1W</ToggleButtonText>
+                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1M">1M</ToggleButtonText>
+                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1Y">1Y</ToggleButtonText>
+                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="YTD">YTD</ToggleButtonText>
+            </ToggleButton.Row>
             </ScrollView>
         </View>
     )
 }
+
+
+
+const styles = StyleSheet.create({
+    row:{
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginHorizontal: 20
+    },
+    buttonRow:{
+        width:'20%'
+    }
+})
