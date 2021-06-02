@@ -12,14 +12,16 @@ import { getTime, endOfToday } from 'date-fns'
 import { ChartEquityRequest, ChartHistoryRequest} from '../api/AmeritradeSockRequests';
 import { selectAccessToken, selectUserPrincipals } from '../Redux/features/tdaSlice'
 import { chartSelector, setChart, resetChart } from '../Redux/features/chartSlice'
+import { setDayChart, setMonthChart, setWeekChart, setYearChart, setYtdChart, daySelector, weekSelector, monthSelector, yearSelector, ytdSelector } from '../Redux/features/chartHistory'
 import { quoteSelector } from '../Redux/features/quoteSlice'
-import { getChartHistory } from '../api/AmeritradeApi'
+import { getChartHistory, getMarketHours } from '../api/AmeritradeApi'
 import Colors from '../configs/Colors'
 import { renameChartCandles, candleFieldMap, quoteFieldMap } from '../api/AmeritradeHelper';
 import * as ChartUtils from '../utils/ChartDataUtils'
 import {Chart} from '../Components/Chart/Chart'
 import ToggleButtonText from '../Components/ToggleButtonText/ToggleButtonText';
-import ToggleButtonRow from '../Components/ToggleButtonRow/ToggleButtonRow';
+
+
 
 export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const defaultChartPeriod = '1D'
@@ -27,56 +29,69 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const dispatch = useDispatch();
     const chartData = useSelector(chartSelector.selectEntities)
     const quoteData = useSelector(quoteSelector.selectEntities)[route.params.symbol]
+    const dayChart = useSelector(daySelector.selectEntities);
+    const weekChart = useSelector(weekSelector.selectEntities);
+    const monthChart = useSelector(monthSelector.selectEntities);
+    const yearChart = useSelector(yearSelector.selectEntities);
+    const ytdChart = useSelector(ytdSelector.selectEntities);
+
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const AccessToken:any = useSelector( selectAccessToken )
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
     const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
-
+    const [marketIsOpen, setMarketIsOpen] = React.useState(false);
+    const [chartCandles, setChartCandles] = React.useState(dayChart);
 
     useEffect(() => {
         onLoad();
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
-            //dispatch(send(ChartHistoryRequest(PrincipalData, Symbol, 'm1', 'd1')))
+            let marketHours = await getMarketHours(AccessToken.access_token, "EQUITY");
+            setMarketIsOpen(marketHours.equity.EQ.isOpen);   
+
+            let dayCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "10", true, marketIsOpen ? getTime(endOfToday()) : null)
+            dayCD = renameChartCandles(dayCD);
+            dispatch(setDayChart(dayCD))
+
+            let weekCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "5", "minute", "30", true, marketIsOpen ? getTime(endOfToday()) : null)
+            weekCD = renameChartCandles(weekCD)
+            dispatch(setWeekChart(weekCD))
+
+            let monthCD = await getChartHistory(AccessToken.access_token, Symbol, "month", "1", "daily", "1", true);
+            monthCD = renameChartCandles(monthCD);
+            dispatch(setMonthChart(monthCD))
+            
+            let yearCD = await getChartHistory(AccessToken.access_token, Symbol, "year", "1", "daily", "1", true)
+            yearCD = renameChartCandles(yearCD);
+            dispatch(setYearChart(yearCD));
+
+            let ytdCD = await getChartHistory(AccessToken.access_token, Symbol, "ytd", "1", "daily", "1", true)
+            ytdCD = renameChartCandles(ytdCD);
+            dispatch(setYtdChart(ytdCD));
+
         }
     }, [])
 
     useEffect(() => {
         onChartPeriodChange();
         async function onChartPeriodChange() {
-            let candleData
+            //let candleData
             switch (chartPeriod){
                 case '1D':
-                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "5", true);
+                    setChartCandles(dayChart)
                     break;
                 case '1W':
-                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "day", "5", "minute", "30", true);
+                    setChartCandles(weekChart)
                     break;
                 case '1M':
-                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "month", "1", "daily", "1", false);
+                    setChartCandles(monthChart)
                     break;
                 case '1Y':
-                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "year", "1", "daily", "1", true);
+                    setChartCandles(yearChart)
                     break;
                 case 'YTD':
-                    candleData = await getChartHistory(AccessToken.access_token, Symbol, "ytd", "1", "daily", "1", true);
+                    setChartCandles(ytdChart)
                     break;
-            }
-             
-            try{            
-                candleData = renameChartCandles(candleData)
-                let chart = {
-                    candles: candleData,
-                    periodType: 'day',
-                    period: '5',
-                    frequencyType: 'minute',
-                    frequency: '30'
-                }
-                dispatch(setChart(chart))
-                let keys = Object.keys(chartData)
-                keys.sort( (a:any,b:any) => {return a-b} );
-            }catch(e){
-                console.log(e)
             }
 
         }
@@ -91,7 +106,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
 
     const buildGraphLine = () => {
-        let dataArr = Object.values(chartData).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
+        let dataArr = Object.values(chartCandles).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
 
         
         const xScale = scaleLinear()
@@ -111,7 +126,6 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         let formattedVals = dataArr.map(
             (item) => [parseFloat(xScale(item[candleFieldMap.Time])), parseFloat(yScale(item[candleFieldMap.Close]))] as [number, number]
         )
-        //console.log(formattedVals)
         let points = dataArr?.map((item) => {
             return `${xScale(item[candleFieldMap.Time])},${yScale(item[candleFieldMap.Close])}`
         })
@@ -168,8 +182,8 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             <Text>debug mark: {ChartUtils.valueToString(quoteData[quoteFieldMap.Mark])}</Text>
             <Text>debug delta: {ChartUtils.percentToString(percentDelta)}</Text>
             <Svg width= {Dimensions.get('window').width} height="400">
-                <G>        
-                    {buildGraphLine()}  
+                <G>   
+                    {buildGraphLine()}     
                 </G>
             </Svg>
             <ToggleButton.Row style={[styles.row]} onValueChange={value => setPeriod(value)} value={chartPeriod}>

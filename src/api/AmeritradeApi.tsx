@@ -136,10 +136,18 @@ export async function getChartHistory ( accessToken:string,
                                         frequencyType:string, 
                                         frequency:string,
                                         extendedHours:boolean = false,
+                                        endDate?:number
                                         ) {
                                             
-    const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory?periodType=${periodType}&period=${period}&frequencyType=${frequencyType}&frequency=${frequency}&needExtendedHoursData=${extendedHours}`
+    let resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory?`
+        resourceUrl += `periodType=${periodType}`
+        resourceUrl += `&period=${period}`
+        resourceUrl += `&frequencyType=${frequencyType}`
+        resourceUrl += `&frequency=${frequency}`
+        resourceUrl += `&needExtendedHoursData=${extendedHours}`
+        resourceUrl +=  endDate? `&endDate=${endDate}`:''
     
+    //console.log(resourceUrl)                                        
     var res = await fetch(resourceUrl, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
@@ -147,6 +155,18 @@ export async function getChartHistory ( accessToken:string,
     })
 
     var resJson:any = await res.json();
-    console.log(resJson)
     return resJson;
 } 
+
+export async function getMarketHours(   accessToken:string, 
+                                        market:string
+                                    ){
+        const resourceUrl = `https://api.tdameritrade.com/v1/marketdata/${market}/hours`
+        var res = await fetch(resourceUrl, {
+            headers: {
+                'Authorization': 'Bearer ' + accessToken
+            }
+        })
+        var resJson:any = await res.json();
+        return resJson;
+    }
