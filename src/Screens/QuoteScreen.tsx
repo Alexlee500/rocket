@@ -11,7 +11,7 @@ import { getTime, endOfToday } from 'date-fns'
 
 import { ChartEquityRequest, ChartHistoryRequest} from '../api/AmeritradeSockRequests';
 import { selectAccessToken, selectUserPrincipals } from '../Redux/features/tdaSlice'
-import { chartSelector, setChart, resetChart } from '../Redux/features/chartSlice'
+//import { chartSelector, setChart, resetChart } from '../Redux/features/chartSlice'
 import { setDayChart, setMonthChart, setWeekChart, setYearChart, setYtdChart, daySelector, weekSelector, monthSelector, yearSelector, ytdSelector } from '../Redux/features/chartHistory'
 import { quoteSelector } from '../Redux/features/quoteSlice'
 import { getChartHistory, getMarketHours } from '../api/AmeritradeApi'
@@ -27,7 +27,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const defaultChartPeriod = '1D'
 
     const dispatch = useDispatch();
-    const chartData = useSelector(chartSelector.selectEntities)
+    //const chartData = useSelector(chartSelector.selectEntities)
     const quoteData = useSelector(quoteSelector.selectEntities)[route.params.symbol]
     const dayChart = useSelector(daySelector.selectEntities);
     const weekChart = useSelector(weekSelector.selectEntities);
@@ -40,7 +40,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
     const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
     const [marketIsOpen, setMarketIsOpen] = React.useState(false);
-    const [chartCandles, setChartCandles] = React.useState(dayChart);
+    const [chartCandles, setChartCandles] = React.useState(null);
 
     useEffect(() => {
         onLoad();
@@ -96,72 +96,75 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
         }
 
-    }, [chartPeriod])
+    }, [chartPeriod, dayChart, weekChart, monthChart, yearChart, ytdChart])
 
 
     const onGoBack = () => {
-        dispatch(resetChart());
+        //dispatch(resetChart());
         goBack()
     }
 
 
     const buildGraphLine = () => {
-        let dataArr = Object.values(chartCandles).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
+        try{
+            let dataArr = Object.values(chartCandles).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
 
         
-        const xScale = scaleLinear()
-            .domain(d3.extent(dataArr, s => s[candleFieldMap.Time]))
-            .range([10, Dimensions.get('window').width -10])
+            const xScale = scaleLinear()
+                .domain(d3.extent(dataArr, s => s[candleFieldMap.Time]))
+                .range([10, Dimensions.get('window').width -10])
+            
+            const xScale2 = scaleLinear()
+                .domain([0, dataArr.length])
+                .range([10, Dimensions.get('window').width -10])
+            
+            const yScale = scaleLinear()
+                .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
+                .range([400, 10])
+    
+            
+    
+            let formattedVals = dataArr.map(
+                (item) => [parseFloat(xScale(item[candleFieldMap.Time])), parseFloat(yScale(item[candleFieldMap.Close]))] as [number, number]
+            )
+            let points = dataArr?.map((item) => {
+                return `${xScale(item[candleFieldMap.Time])},${yScale(item[candleFieldMap.Close])}`
+            })
+    
+    
+            let timeSkipVals = dataArr.map(
+                (item, idx ) => [parseFloat(xScale2(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
+            )
+    
+    
+            let final = points?.reduce((res, item) =>{
+                return `${res} ${item}`
+            }, '')
+    
+    
+    
+            const s = shape
+            .line()
+            .x(([x]) => x as number)
+            .y(([,y]) => y as number)
+            .curve(shape.curveBasis)(formattedVals) as string
+    
+            const s2 = shape
+            .line()
+            .x(([x]) => x as number)
+            .y(([,y]) => y as number)
+            .curve(shape.curveBasis)(timeSkipVals) as string
+    
+    
+            return (
+                <Path 
+                d={s2}
+                strokeWidth="2"
+                stroke={ChartUtils.getDirection(percentDelta) != 0 ? (ChartUtils.getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
+                />
+            )
+        }catch{}
         
-        const xScale2 = scaleLinear()
-            .domain([0, dataArr.length])
-            .range([10, Dimensions.get('window').width -10])
-        
-        const yScale = scaleLinear()
-            .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
-            .range([400, 10])
-
-        
-
-        let formattedVals = dataArr.map(
-            (item) => [parseFloat(xScale(item[candleFieldMap.Time])), parseFloat(yScale(item[candleFieldMap.Close]))] as [number, number]
-        )
-        let points = dataArr?.map((item) => {
-            return `${xScale(item[candleFieldMap.Time])},${yScale(item[candleFieldMap.Close])}`
-        })
-
-
-        let timeSkipVals = dataArr.map(
-            (item, idx ) => [parseFloat(xScale2(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
-        )
-
-
-        let final = points?.reduce((res, item) =>{
-            return `${res} ${item}`
-        }, '')
-
-
-
-        const s = shape
-        .line()
-        .x(([x]) => x as number)
-        .y(([,y]) => y as number)
-        .curve(shape.curveBasis)(formattedVals) as string
-
-        const s2 = shape
-        .line()
-        .x(([x]) => x as number)
-        .y(([,y]) => y as number)
-        .curve(shape.curveBasis)(timeSkipVals) as string
-
-
-        return (
-            <Path 
-            d={s2}
-            strokeWidth="2"
-            stroke={ChartUtils.getDirection(percentDelta) != 0 ? (ChartUtils.getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
-            />
-        )
     }
 
     //let percentDelta:number = Number((((quoteData[quoteFieldMap.Mark] - quoteData[quoteFieldMap.Close]) / quoteData[quoteFieldMap.Close]) * 100).toFixed(2))

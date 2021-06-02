@@ -65,13 +65,12 @@ const chartSlice = createSlice({
                 let response = MessageData?.data[0]
                 if (response?.service == "CHART_EQUITY"){
                     let candle = response.content
-                    console.log(`new candle ${JSON.stringify(candle)}`)
+                    //console.log(`new candle ${JSON.stringify(candle)}`)
 
                     if (candle.key == state.symbol){
                         switch(state.frequencyType){
                             case "minute":{
                                 
-       
                                 break
                             }
                             case "daily":
@@ -90,12 +89,12 @@ const chartSlice = createSlice({
             try{
                 let MessageData = JSON.parse(action.payload.event.data);
                 let snapshot = MessageData?.snapshot[0]
-                console.log(`snapshot ${snapshot}`)
+                //console.log(`snapshot ${snapshot}`)
                 if (snapshot?.service == "CHART_HISTORY_FUTURES"){
-                    console.log(snapshot)
+                    //console.log(snapshot)
                     let content = snapshot.content[0];
                     let chartCandles = content["3"];
-                    console.log(`chart candles ${JSON.stringify(chartCandles)}`)
+                    //console.log(`chart candles ${JSON.stringify(chartCandles)}`)
                 }
             }
             catch{}

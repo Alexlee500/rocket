@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
     auth: authReducer,
     tda: tdaReducer,
     quote: quoteReducer,
-    chart: chartReducer,
+    //chart: chartReducer,
     chartHistory: chartHistoryReducer
 })
 

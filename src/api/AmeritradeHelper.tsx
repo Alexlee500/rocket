@@ -26,7 +26,7 @@ export const candleFieldMap = {
 }
 
 export const renameChartCandles = (res) => {
-    console.log(res)
+    //console.log(res)
     let renamedCandleChart = res.candles.map((item)=> {
         return {
             1: item.open,

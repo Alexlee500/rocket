@@ -89,9 +89,9 @@ export const tdaSlice = createSlice({
         })       
         .addCase(REDUX_WEBSOCKET_SEND, (state, action:WebsocketSend) => {
             console.log('sock send');
-            console.log(`Send ${JSON.stringify(action)}`)
+            //console.log(`Send ${JSON.stringify(action)}`)
 
-            console.log(`Send Payload ${JSON.stringify(action.payload)}`)
+            //console.log(`Send Payload ${JSON.stringify(action.payload)}`)
 
 
         })

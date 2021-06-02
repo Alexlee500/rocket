@@ -65,7 +65,7 @@ const initialState = {
         ytdCandles: ytdInitialState
 }
 
-const chartSlice = createSlice({
+const chartHistory = createSlice({
     name:'chartHistory',
     initialState,
     reducers:{
@@ -119,6 +119,6 @@ export const {
     setYearChart,
     setYtdChart,
     resetChart
-} = chartSlice.actions
+} = chartHistory.actions
 
-export default chartSlice.reducer
+export default chartHistory.reducer
