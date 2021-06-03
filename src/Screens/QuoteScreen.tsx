@@ -37,10 +37,12 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
     const PrincipalData:any = useSelector( selectUserPrincipals )
     const AccessToken:any = useSelector( selectAccessToken )
+
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
     const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
     const [marketIsOpen, setMarketIsOpen] = React.useState(false);
     const [chartCandles, setChartCandles] = React.useState(null);
+
 
     useEffect(() => {
         onLoad();
@@ -110,11 +112,8 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             let dataArr = Object.values(chartCandles).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
 
         
-            const xScale = scaleLinear()
-                .domain(d3.extent(dataArr, s => s[candleFieldMap.Time]))
-                .range([10, Dimensions.get('window').width -10])
             
-            const xScale2 = scaleLinear()
+            const xScale = scaleLinear()
                 .domain([0, dataArr.length])
                 .range([10, Dimensions.get('window').width -10])
             
@@ -124,37 +123,20 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     
             
     
-            let formattedVals = dataArr.map(
-                (item) => [parseFloat(xScale(item[candleFieldMap.Time])), parseFloat(yScale(item[candleFieldMap.Close]))] as [number, number]
-            )
-            let points = dataArr?.map((item) => {
-                return `${xScale(item[candleFieldMap.Time])},${yScale(item[candleFieldMap.Close])}`
-            })
-    
     
             let timeSkipVals = dataArr.map(
-                (item, idx ) => [parseFloat(xScale2(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
+                (item, idx ) => [parseFloat(xScale(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
             )
     
-    
-            let final = points?.reduce((res, item) =>{
-                return `${res} ${item}`
-            }, '')
+
     
     
-    
-            const s = shape
-            .line()
-            .x(([x]) => x as number)
-            .y(([,y]) => y as number)
-            .curve(shape.curveBasis)(formattedVals) as string
-    
+
             const s2 = shape
             .line()
             .x(([x]) => x as number)
             .y(([,y]) => y as number)
             .curve(shape.curveBasis)(timeSkipVals) as string
-    
     
             return (
                 <Path 
@@ -184,11 +166,9 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             <ScrollView>
             <Text>debug mark: {ChartUtils.valueToString(quoteData[quoteFieldMap.Mark])}</Text>
             <Text>debug delta: {ChartUtils.percentToString(percentDelta)}</Text>
-            <Svg width= {Dimensions.get('window').width} height="400">
-                <G>   
-                    {buildGraphLine()}     
-                </G>
-            </Svg>
+
+            <Chart height={400} priceHistory={chartCandles} />
+            
             <ToggleButton.Row style={[styles.row]} onValueChange={value => setPeriod(value)} value={chartPeriod}>
                 <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1D">1D</ToggleButtonText>
                 <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1W">1W</ToggleButtonText>

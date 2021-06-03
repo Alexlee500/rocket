@@ -16,31 +16,57 @@ import * as ChartUtils from '../../utils/ChartDataUtils'
 import Colors from '../../configs/Colors';
 
 
-export function Chart(){
+type Props = {
+    height: number,
+    priceHistory: any
+}
+
+const Chart = ({height, priceHistory } : Props) => {
+    const getPath = () => {
+        try{
+            let dataArr = Object.values(priceHistory).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
+            
+            const xScale = scaleLinear()
+                .domain([0, dataArr.length])
+                .range([10, Dimensions.get('window').width -10])
+            
+            const yScale = scaleLinear()
+                .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
+                .range([height, 0])
     
-    const [chartPeriod, setChartPeriod] = React.useState('1D')
+            let timeSkipVals = dataArr.map(
+                (item, idx ) => [parseFloat(xScale(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
+            )
 
     
+            const path = shape
+            .line()
+            .x(([x]) => x as number)
+            .y(([,y]) => y as number)
+            .curve(shape.curveBasis)(timeSkipVals) as string
+            return (path)
+        }catch(e){
+            console.log(e)
+        }
+        
+    }
+    
     return (
-        <View style={[styles.row]}>        
-        <Button compact mode={chartPeriod == '1D'? 'contained':'text'} style={[styles.buttonRow]} color={Colors.TextLight} onPress={() => {setChartPeriod('1D')}}>1D</Button>
-        <Button compact mode={chartPeriod == '1W'? 'contained':'text'} style={[styles.buttonRow]} color={Colors.TextLight} onPress={() => {setChartPeriod('1W')}}>1W</Button>
-        <Button compact mode={chartPeriod == '1M'? 'contained':'text'} style={[styles.buttonRow]} color={Colors.TextLight} onPress={() => {setChartPeriod('1M')}}>1M</Button>
-        <Button compact mode={chartPeriod == '1Y'? 'contained':'text'} style={[styles.buttonRow]} color={Colors.TextLight} onPress={() => {setChartPeriod('1Y')}}>1Y</Button>
-        <Button compact mode={chartPeriod == 'All'? 'contained':'text'} style={[styles.buttonRow]} color={Colors.TextLight} onPress={() => {setChartPeriod('All')}}>All</Button>
+        
+        <View>
+        <Svg width={Dimensions.get('window').width} height={height}>
+            <G>
+                <Path
+                    d={getPath()}
+                    strokeWidth="2"
+                    stroke={Colors.Green}
+                />
+            </G>
+        </Svg>
         </View>
+
     )
 }
 
-const styles = StyleSheet.create({
-    row:{
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginHorizontal: 20
-    },
-    buttonRow:{
-        width:'20%'
-    }
-})
+export { Chart }
 
