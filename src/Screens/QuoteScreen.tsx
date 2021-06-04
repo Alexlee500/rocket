@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Dimensions } from "react-native"
-import { Appbar, List, Card, Title, Paragraph, Menu, Text, ToggleButton} from 'react-native-paper';
+import { Appbar, List, Card, Title, Paragraph, Button, Text, ToggleButton} from 'react-native-paper';
 import { useDispatch, useSelector} from 'react-redux';
 import { send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 import { Svg, G, Path , Polyline } from 'react-native-svg'
@@ -107,51 +107,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     }
 
 
-    const buildGraphLine = () => {
-        try{
-            let dataArr = Object.values(chartCandles).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
-
-        
-            
-            const xScale = scaleLinear()
-                .domain([0, dataArr.length])
-                .range([10, Dimensions.get('window').width -10])
-            
-            const yScale = scaleLinear()
-                .domain(d3.extent(dataArr, s=> s[candleFieldMap.Close]))
-                .range([400, 10])
-    
-            
-    
-    
-            let timeSkipVals = dataArr.map(
-                (item, idx ) => [parseFloat(xScale(idx)), parseFloat(yScale(item[candleFieldMap.Close]))]
-            )
-    
-
-    
-    
-
-            const s2 = shape
-            .line()
-            .x(([x]) => x as number)
-            .y(([,y]) => y as number)
-            .curve(shape.curveBasis)(timeSkipVals) as string
-    
-            return (
-                <Path 
-                d={s2}
-                strokeWidth="2"
-                stroke={ChartUtils.getDirection(percentDelta) != 0 ? (ChartUtils.getDirection(percentDelta) > 0 ? Colors.Green : Colors.Red) : Colors.TextLight}
-                />
-            )
-        }catch{}
-        
-    }
-
-    //let percentDelta:number = Number((((quoteData[quoteFieldMap.Mark] - quoteData[quoteFieldMap.Close]) / quoteData[quoteFieldMap.Close]) * 100).toFixed(2))
     let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
-    //let percentDeltaDir:number = ChartUtils.getDirection(percentDelta);
     return (
         <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
             <Appbar.Header
@@ -169,13 +125,14 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
             <Chart height={400} priceHistory={chartCandles} />
             
-            <ToggleButton.Row style={[styles.row]} onValueChange={value => setPeriod(value)} value={chartPeriod}>
-                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1D">1D</ToggleButtonText>
-                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1W">1W</ToggleButtonText>
-                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1M">1M</ToggleButtonText>
-                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="1Y">1Y</ToggleButtonText>
-                <ToggleButtonText color={Colors.TextLight} style={[styles.buttonRow]} value="YTD">YTD</ToggleButtonText>
-            </ToggleButton.Row>
+  
+            <View style={[styles.row]}>
+            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1D')} mode={chartPeriod=='1D'? 'contained':'text'}>1D</Button>
+            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1W')} mode={chartPeriod=='1W'? 'contained':'text'}>1W</Button>
+            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1M')} mode={chartPeriod=='1M'? 'contained':'text'}>1M</Button>
+            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1Y')} mode={chartPeriod=='1Y'? 'contained':'text'}>1Y</Button>
+            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('YTD')} mode={chartPeriod=='YTD'? 'contained':'text'}>YTD</Button>
+            </View>
             </ScrollView>
         </View>
     )
