@@ -1,4 +1,5 @@
 import React from 'react';
+import { LogBox } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -20,8 +21,8 @@ import Colors from '../configs/Colors'
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
-
-const idleTimeout = 60000
+LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
+const idleTimeout = 300000
 
 export default function AppTabNavigator() {
     const PrincipalData = useSelector( selectUserPrincipals )
