@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Dimensions } from "react-native"
+import React, { useEffect, useRef } from 'react';
+import { ScrollView, StyleSheet, View, Dimensions, PanResponder } from "react-native"
 import { Appbar, List, Card, Title, Paragraph, Button, Text, ToggleButton} from 'react-native-paper';
 import { useDispatch, useSelector} from 'react-redux';
 import { send } from '@alexlee500/redux-websocket/ReduxWebsocket'
@@ -20,6 +20,7 @@ import { renameChartCandles, candleFieldMap, quoteFieldMap } from '../api/Amerit
 import * as ChartUtils from '../utils/ChartDataUtils'
 import {Chart} from '../Components/Chart/Chart'
 import ToggleButtonText from '../Components/ToggleButtonText/ToggleButtonText';
+import UseIdleTimer from '../Components/IdleTimer/IdleTimer'
 
 
 
@@ -27,7 +28,6 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const defaultChartPeriod = '1D'
 
     const dispatch = useDispatch();
-    //const chartData = useSelector(chartSelector.selectEntities)
     const quoteData = useSelector(quoteSelector.selectEntities)[route.params.symbol]
     const dayChart = useSelector(daySelector.selectEntities);
     const weekChart = useSelector(weekSelector.selectEntities);
@@ -41,7 +41,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
     const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
     const [marketIsOpen, setMarketIsOpen] = React.useState(false);
-    const [chartCandles, setChartCandles] = React.useState(null);
+    const [chartCandles, setChartCandles] = React.useState(dayChart);
 
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
             let marketHours = await getMarketHours(AccessToken.access_token, "EQUITY");
-            setMarketIsOpen(marketHours?.equity?.EQ?.isOpen);   
+            setMarketIsOpen(marketHours?.equity?.EQ?.isOpen || false);   
 
             let dayCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "10", true, marketIsOpen ? getTime(endOfToday()) : null)
             dayCD = renameChartCandles(dayCD);
@@ -77,7 +77,6 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     useEffect(() => {
         onChartPeriodChange();
         async function onChartPeriodChange() {
-            //let candleData
             switch (chartPeriod){
                 case '1D':
                     setChartCandles(dayChart)

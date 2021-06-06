@@ -102,27 +102,6 @@ export default function WatchlistScreen({navigation:{navigate}}) {
         setSortConfig({ key, direction });
     };
 
-    const parseValue = (val:number) => {
-        return (!isNaN(val) && val != null) ? (
-            (val < 0? '-' : '') + '$'+ Math.abs(val).toFixed(2)
-        ):(
-            '-'
-        )
-    }
-
-    const parseValuePercent = (val) => {
-        return (!isNaN(val) && val != null) ? (
-            (val>=0? '+':'') + val + '%'
-        ):(
-            '-'
-        )
-    }
-
-    const getDirection = (val) => {
-        if (val > 0) return 1;
-        if (val < 0) return -1;
-        return 0;
-    }
 
     const watchlistRows = watchlistSymbols.map((item) => {
         //let percentDelta =  (((allEntities?.[item]?.[quoteFieldMap.Mark]-allEntities?.[item]?.[quoteFieldMap.Close])/allEntities?.[item]?.[quoteFieldMap.Close] ) * 100).toFixed(2)

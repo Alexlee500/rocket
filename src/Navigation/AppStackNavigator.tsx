@@ -11,19 +11,19 @@ import DeAuthTestScreen from '../Screens/DeAuthTestScreen';
 import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
 import OauthPromptScreen from '../Screens/OauthPromptScreen';
 import AppTabNavigator from './AppTabNavigator';
-
 const Stack = createStackNavigator();
 
 export default function AppStackNavigator(){
 
     console.log('app stack nav')
-
     //const dispatch = useDispatch();
     //dispatch(clearTokens());
 
     const loginLoading = useSelector( selectLoginLoading )
     const sockAuth = useSelector( selectSocketAuth )
     const refresh = useSelector( selectRefreshToken )
+
+
     return (
         <Stack.Navigator headerMode="none">
             {
