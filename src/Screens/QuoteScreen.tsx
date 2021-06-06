@@ -49,7 +49,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
             let marketHours = await getMarketHours(AccessToken.access_token, "EQUITY");
-            setMarketIsOpen(marketHours.equity.EQ.isOpen);   
+            setMarketIsOpen(marketHours?.equity?.EQ?.isOpen);   
 
             let dayCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "10", true, marketIsOpen ? getTime(endOfToday()) : null)
             dayCD = renameChartCandles(dayCD);
@@ -108,6 +108,10 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
 
     let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
+
+    const periodButtons = ['1D', '1W', '1M', '1Y', 'YTD']
+
+
     return (
         <View style={{flex:1,  backgroundColor: Colors.MainDark}}>
             <Appbar.Header
@@ -123,15 +127,14 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             <Text>debug mark: {ChartUtils.valueToString(quoteData[quoteFieldMap.Mark])}</Text>
             <Text>debug delta: {ChartUtils.percentToString(percentDelta)}</Text>
 
-            <Chart height={400} priceHistory={chartCandles} />
+            <Chart height={200} priceHistory={chartCandles} />
             
-  
             <View style={[styles.row]}>
-            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1D')} mode={chartPeriod=='1D'? 'contained':'text'}>1D</Button>
-            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1W')} mode={chartPeriod=='1W'? 'contained':'text'}>1W</Button>
-            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1M')} mode={chartPeriod=='1M'? 'contained':'text'}>1M</Button>
-            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('1Y')} mode={chartPeriod=='1Y'? 'contained':'text'}>1Y</Button>
-            <Button color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod('YTD')} mode={chartPeriod=='YTD'? 'contained':'text'}>YTD</Button>
+            {periodButtons.map((period) => {
+                return (
+                    <Button key={period} color={Colors.TextLight} style={[styles.buttonRow]} onPress={()=>setPeriod(period)} mode={chartPeriod==period? 'contained':'text'}>{period}</Button>
+                )
+            })}
             </View>
             </ScrollView>
         </View>
