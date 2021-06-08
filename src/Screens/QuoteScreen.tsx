@@ -12,7 +12,7 @@ import { getTime, endOfToday } from 'date-fns'
 import { ChartEquityRequest, ChartHistoryRequest} from '../api/AmeritradeSockRequests';
 import { selectAccessToken, selectUserPrincipals } from '../Redux/features/tdaSlice'
 //import { chartSelector, setChart, resetChart } from '../Redux/features/chartSlice'
-import { setDayChart, setMonthChart, setWeekChart, setYearChart, setYtdChart, daySelector, weekSelector, monthSelector, yearSelector, ytdSelector } from '../Redux/features/chartHistory'
+import { setDayChart, setMonthChart, setWeekChart, setYearChart, setYtdChart, daySelector, weekSelector, monthSelector, yearSelector, ytdSelector, resetChart } from '../Redux/features/chartHistory'
 import { quoteSelector } from '../Redux/features/quoteSlice'
 import { getChartHistory, getMarketHours } from '../api/AmeritradeApi'
 import Colors from '../configs/Colors'
@@ -26,6 +26,7 @@ import UseIdleTimer from '../Components/IdleTimer/IdleTimer'
 
 export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const defaultChartPeriod = '1D'
+    const periodButtons = ['1D', '1W', '1M', '1Y', 'YTD']
 
     const dispatch = useDispatch();
     const quoteData = useSelector(quoteSelector.selectEntities)[route.params.symbol]
@@ -43,9 +44,13 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const [marketIsOpen, setMarketIsOpen] = React.useState(false);
     const [chartCandles, setChartCandles] = React.useState(dayChart);
 
+    let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
 
     useEffect(() => {
-        onLoad();
+        console.log(AccessToken)
+        if (AccessToken?.access_token){
+            onLoad();
+        }
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
             let marketHours = await getMarketHours(AccessToken.access_token, "EQUITY");
@@ -72,7 +77,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
             dispatch(setYtdChart(ytdCD));
 
         }
-    }, [])
+    }, [AccessToken])
 
     useEffect(() => {
         onChartPeriodChange();
@@ -101,14 +106,10 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
 
 
     const onGoBack = () => {
-        //dispatch(resetChart());
+        dispatch(resetChart());
         goBack()
     }
 
-
-    let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
-
-    const periodButtons = ['1D', '1W', '1M', '1Y', 'YTD']
 
 
     return (
@@ -118,7 +119,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
                 style={{backgroundColor: Colors.MainDark}}>
             <Appbar.Action 
                 icon={'arrow-left'}
-                onPress={() => goBack()}
+                onPress={() => onGoBack()}
             />
             <Appbar.Content title={Symbol}/>
             </Appbar.Header>

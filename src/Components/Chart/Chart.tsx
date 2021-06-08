@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Dimensions } from "react-native"
+import { View, StyleSheet, Dimensions } from "react-native"
 import { Svg, G, Path } from 'react-native-svg'
 import * as d3 from "d3";
 import * as shape from "d3-shape";
 import { scaleLinear } from "d3-scale";
-
+import { ActivityIndicator } from 'react-native-paper';
 
 
 import { candleFieldMap } from '../../api/AmeritradeHelper';
@@ -15,6 +15,9 @@ type Props = {
     height: number,
     priceHistory: any
 }
+
+
+
 
 const Chart = ({height, priceHistory } : Props) => {
     const getPath = () => {
@@ -46,21 +49,31 @@ const Chart = ({height, priceHistory } : Props) => {
         
     }
 
+    const path = getPath()
     return (
         <View>
-        <Svg width={Dimensions.get('window').width} height={height}>
-            <G>
-                <Path
-                    d={getPath()}
-                    strokeWidth="2"
-                    stroke={ Colors.Green }
-                />
-            </G>
-        </Svg>
+            <Svg width={Dimensions.get('window').width} height={height}>
+                <G>
+                <ActivityIndicator animating={path? false : true} color={Colors.TextLight} size="large" style={styles.center}/>
+                    <Path
+                        d={path}
+                        strokeWidth="2"
+                        stroke={ Colors.Green }
+                    />
+                </G>
+            </Svg>
         </View>
 
     )
+
+    
 }
 
 export { Chart }
 
+const styles = StyleSheet.create({
+    center:{
+        justifyContent: 'center',
+        paddingTop: 20
+    }
+})

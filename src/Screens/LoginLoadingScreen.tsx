@@ -80,6 +80,9 @@ export default function LoginLoadingScreen() {
             }
         }
         hasRefreshToken()
+        return () => {
+            setAccessToken(null)
+        }
     }, [refreshToken])
 
 

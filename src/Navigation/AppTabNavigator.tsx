@@ -1,5 +1,5 @@
-import React from 'react';
-import { LogBox } from "react-native";
+import React, {useEffect, useRef, useState} from 'react';
+import { AppState, LogBox } from "react-native";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -23,11 +23,38 @@ const Stack = createStackNavigator();
 
 LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
 const idleTimeout = 300000
-
+const backgroundTimeout = 60000
 export default function AppTabNavigator() {
-    const PrincipalData = useSelector( selectUserPrincipals )
 
+
+    const PrincipalData = useSelector( selectUserPrincipals )
     const dispatch = useDispatch();
+
+    const appState = useRef(AppState.currentState);
+    const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+
+    
+    useEffect(() => {
+        AppState.addEventListener("change", _handleAppStateChange)
+        return () => {
+            AppState.removeEventListener("change", _handleAppStateChange)
+        }
+    }, [])
+
+    
+    const _handleAppStateChange = (nextAppState) => {
+        if (
+            appState.current.match(/inactive|background/) &&
+            nextAppState === "active"
+          ) {
+            console.log("App has come to the foreground!");
+          }
+      
+          appState.current = nextAppState;
+          setAppStateVisible(appState.current);
+          console.log("AppState", appState.current);
+    }
 
     const onIdle = () => {
         const logout = async() => {
