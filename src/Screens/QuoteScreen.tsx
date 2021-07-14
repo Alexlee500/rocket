@@ -47,7 +47,6 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
 
     useEffect(() => {
-        console.log(AccessToken)
         if (AccessToken?.access_token){
             onLoad();
         }
