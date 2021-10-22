@@ -1170,13 +1170,6 @@
   dependencies:
     cross-spawn "^6.0.5"
 
-"@giantmachines/redux-websocket@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@giantmachines/redux-websocket/-/redux-websocket-1.5.0.tgz#eb75e75452e161e8c8ddc09b5ac3c47581beb6e1"
-  integrity sha512-Cc4aHuGQVzdKp9ILjat+rpBEa3AKyAHKp8lbm/ccCLoRaPOk0pgxqGjLTuXCp/GiYrnLulgOLH4+UaqsMVCi5Q==
-  dependencies:
-    redux "~4"
-
 "@hapi/hoek@^9.0.0":
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.1.1.tgz#9daf5745156fd84b8e9889a2dc721f0c58e894aa"
@@ -7626,7 +7619,7 @@ redux-thunk@^2.3.0:
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
   integrity sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==
 
-redux@^4.0.0, redux@~4:
+redux@^4.0.0:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.5.tgz#4db5de5816e17891de8a80c424232d06f051d93f"
   integrity sha512-VSz1uMAH24DM6MF72vcojpYPtrTUu3ByVWfPL1nPfVRb5mZVTve5GnNCUV53QM/BZ66xfWrm0CTWoM+Xlz8V1w==
