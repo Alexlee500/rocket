@@ -38,48 +38,53 @@ declare interface UserPrincipals {
         isForexDelayed: boolean
     },
     streamerSubscriptionKeys:{
-        keys: {
-            key: string
+        keys:{
+            [index:number]:{
+                key:string
+            } 
         }
-    }
-    accounts: {
-        accountId: string,
-        description: string,
-        displayName: string,
-        accountCdDomainId: string,
-        company: string,
-        segment: string,
-        surrogateIds: object,
-        preferences: {
-            expressTrading: boolean,
-            directOptionsRouting: boolean,
-            directEquityRouting: boolean,
-            defaultEquityOrderLegInstruction: string,
-            defaultEquityOrderType: string,
-            defaultEquityOrderPriceLinkType: string,
-            defaultEquityOrderDuration: string,
-            defaultEquityOrderMarketSession: string,
-            defaultEquityQuantity: number,
-            mutualFundTaxLotMethod: string,
-            optionTaxLotMethod: string,
-            equityTaxLotMethod: string,
-            defaultAdvancedToolLaunch: string,
-            authTokenTimeout: string,
-        },
-        acl: string,
-        authorizations: {
-            apex: false,
-            levelTwoQuotes: boolean,
-            stockTrading: boolean,
-            marginTrading: boolean,
-            streamingNews: boolean,
-            optionTradingLevel: string,
-            streamerAccess: boolean,
-            advancedMargin: boolean,
-            scottradeAccount: boolean
+    },
+    accounts:{
+        [index:number]:{
+            accountId: string,
+            description: string,
+            displayName: string,
+            accountCdDomainId: string,
+            company: string,
+            segment: string,
+            surrogateIds: object,
+            preferences: {
+                expressTrading: boolean,
+                directOptionsRouting: boolean,
+                directEquityRouting: boolean,
+                defaultEquityOrderLegInstruction: string,
+                defaultEquityOrderType: string,
+                defaultEquityOrderPriceLinkType: string,
+                defaultEquityOrderDuration: string,
+                defaultEquityOrderMarketSession: string,
+                defaultEquityQuantity: number,
+                mutualFundTaxLotMethod: string,
+                optionTaxLotMethod: string,
+                equityTaxLotMethod: string,
+                defaultAdvancedToolLaunch: string,
+                authTokenTimeout: string,
+            },
+            acl: string,
+            authorizations: {
+                apex: false,
+                levelTwoQuotes: boolean,
+                stockTrading: boolean,
+                marginTrading: boolean,
+                streamingNews: boolean,
+                optionTradingLevel: string,
+                streamerAccess: boolean,
+                advancedMargin: boolean,
+                scottradeAccount: boolean
+            }
         }
     }
 }
+
 
 declare interface Watchlists {
     name: string,

@@ -5,7 +5,7 @@ import AmeritradeConf from '../configs/AmeritradeConf'
 
 
 export const AuthRequest = (PrincipalData:UserPrincipals) => {
-    function jsonToQueryString(json) {
+    function jsonToQueryString(json:any) {
         return Object.keys(json).map(function(key) {
                 return encodeURIComponent(key) + '=' +
                     encodeURIComponent(json[key]);
@@ -64,7 +64,7 @@ export const subscribeAccountActivity = (PrincipalData:UserPrincipals) => {
     return subRequest
 }
 
-export const subscribeQuote = ( PrincipalData:UserPrincipals, symbols ) => {
+export const subscribeQuote = ( PrincipalData:UserPrincipals, symbols:string ) => {
     var subRequest = {
         "requests": [{
             "service": "QUOTE",
@@ -81,7 +81,7 @@ export const subscribeQuote = ( PrincipalData:UserPrincipals, symbols ) => {
     return subRequest
 }
 
-export const subscribeOptions = ( PrincipalData:UserPrincipals, symbols ) => {
+export const subscribeOptions = ( PrincipalData:UserPrincipals, symbols:string ) => {
     var subRequest = {
         "requests": [{
             "service": "OPTION",
@@ -112,7 +112,7 @@ export const LogoutRequest = ( PrincipalData:UserPrincipals ) => {
     return subRequest
 }
 
-export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols) => {
+export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols:string) => {
     var subRequest = {
         "requests": [{
             "service": "CHART_EQUITY",
@@ -129,7 +129,7 @@ export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols) => {
     return subRequest
 }
 
-export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol, frequency, period) => {
+export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol:string, frequency:string, period:string) => {
     console.log('chart history request')
     var subRequest = {
         "requests": [{

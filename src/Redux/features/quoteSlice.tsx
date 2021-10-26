@@ -40,7 +40,7 @@ const quoteSlice = createSlice({
     },
     extraReducers:(builder) => {
         builder
-        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
+        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:any) => {
             let MessageData = JSON.parse(action.payload.event.data);
             try{
                 let response = MessageData?.data[0]
