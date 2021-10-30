@@ -4,7 +4,7 @@ import { getTime, endOfToday } from 'date-fns'
 import AmeritradeConf from '../configs/AmeritradeConf'
 
 
-export async function oauthApiLogin() : Promise<AccessToken> {
+export async function oauthApiLogin() : Promise<AccessToken | null> {
     console.log('tda login');
     var encodedUri:string = encodeURIComponent(AmeritradeConf.redirectUrl);
     var encodedClientId:string = encodeURIComponent(AmeritradeConf.clientId+ '@AMER.OAUTHAP');
@@ -23,9 +23,7 @@ export async function oauthApiLogin() : Promise<AccessToken> {
     try{
         
         const result = await authorize(config);
-        
         const res = await getTokensFromAuthCode(result.authorizationCode)
-
         console.log(`oauth Login Done with`)
         return res;
 

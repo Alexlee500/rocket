@@ -58,7 +58,7 @@ const chartSlice = createSlice({
     },
     extraReducers:(builder) => {
         builder
-        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
+        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:any) => {
 
             try{
                 let MessageData = JSON.parse(action.payload.event.data);

@@ -131,6 +131,7 @@ export const ChartEquityRequest = (PrincipalData:UserPrincipals, symbols:string)
 
 export const ChartHistoryRequest = (PrincipalData:UserPrincipals, symbol:string, frequency:string, period:string) => {
     console.log('chart history request')
+
     var subRequest = {
         "requests": [{
             "service": "CHART_HISTORY_FUTURES",

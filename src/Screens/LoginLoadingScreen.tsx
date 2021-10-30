@@ -48,7 +48,7 @@ export default function LoginLoadingScreen() {
     useEffect(() => {
         const loadData = async () => {
             console.log('ree')
-            let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
+            let refToken = await SecureStore.getItemAsync(SecureStoreVars.Tokens.RefreshToken);
             if (refToken){
                 setRefreshToken(refToken);
             }

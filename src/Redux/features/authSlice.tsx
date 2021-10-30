@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, Store} from '@reduxjs/toolkit';
-import { RootState } from '../rootReducer';
+import { RootState } from '../store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Dispatch } from 'redux';
 

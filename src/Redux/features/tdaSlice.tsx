@@ -13,7 +13,7 @@ import {
   
   import { bindActionCreators, Dispatch } from 'redux';
 
-import { RootState } from '../rootReducer';
+import { RootState } from '../store';
 import * as SecureStore from 'expo-secure-store';
 import * as tda from '../../api/AmeritradeApi';
 import SecureStoreVars from '../../vars/SecureStoreVars';
@@ -22,15 +22,15 @@ interface tdaSlice{
     loginLoading: boolean
     socketConnected: boolean
     socketAuthenticated: boolean
-    refreshToken: string
-    accessToken: string
-    userPrincipals: UserPrincipals
-    watchlistData: Watchlists
-    accountData: SecuritiesAccount
+    refreshToken?: string
+    accessToken?: string
+    userPrincipals: UserPrincipals | null
+    watchlistData: Watchlists | null
+    accountData: SecuritiesAccount | null
 }
 
 
-const initialState = { 
+const initialState:tdaSlice = { 
     loginLoading: true,
     socketConnected: false,
     socketAuthenticated: false,
@@ -56,22 +56,32 @@ export const tdaSlice = createSlice({
             state.userPrincipals = initialState.userPrincipals;
         },
         setRefreshToken: ( state, action: PayloadAction<string>) => {
-            state.refreshToken = action.payload;
+            if (action.payload){
+                state.refreshToken = action.payload;
+            }
         },
         setAccessToken: ( state, action: PayloadAction<string>) => {
-            state.accessToken = action.payload;
+            if (action.payload){
+                state.accessToken = action.payload;
+            }
         },
         setUserPrincipalJson:(state, action: PayloadAction<UserPrincipals>) => {
-            state.userPrincipals = action.payload;
+            if (action.payload){
+                state.userPrincipals = action.payload;
+            }
         },
         setLoginLoading:(state, action: PayloadAction<boolean>) => {
             state.loginLoading = action.payload;
         },
         setWatchlistData:(state, action: PayloadAction<Watchlists>) => {
-            state.watchlistData = action.payload
+            if (action.payload){
+                state.watchlistData = action.payload
+            }
         },
         setAccountData:(state, action: PayloadAction<SecuritiesAccount>) => {
-            state.accountData = action.payload
+            if (action.payload){
+                state.accountData = action.payload
+            }
         },    
     },
     extraReducers:(builder) => {
@@ -95,7 +105,7 @@ export const tdaSlice = createSlice({
 
 
         })
-        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:WebsocketMessage) => {
+        .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:any) => {
             //console.log('sock message');
             //console.log(JSON.stringify(action.payload))
             //console.log(`Message Payload ${JSON.stringify(action.payload.event.data)}`)
@@ -128,9 +138,9 @@ export const clearTokens = () => {
     return async (dispatch:Dispatch) => {
         console.log('logging out');
         try{
-            dispatch(setRefreshToken(null));
-            dispatch(setAccessToken(null));
-            await SecureStore.deleteItemAsync(SecureStoreVars.RefreshToken);
+            dispatch(setRefreshToken(''));
+            dispatch(setAccessToken(''));
+            await SecureStore.deleteItemAsync(SecureStoreVars.Tokens.RefreshToken);
         }
         catch(error){
             console.log(error);
@@ -140,12 +150,13 @@ export const clearTokens = () => {
 
 export const getTokensFromOauth = () => {
     return async (dispatch:Dispatch) => {
-        console.log('get Refresh Token from storage');
         try{
-            let oauthResponse = await tda.oauthApiLogin();
-            SecureStore.setItemAsync(SecureStoreVars.RefreshToken, oauthResponse.refresh_token);
-            dispatch(setRefreshToken(oauthResponse.refresh_token));
-            console.log('getTokens Done');
+            const oauthResponse = await tda.oauthApiLogin();
+            if (oauthResponse){
+                SecureStore.setItemAsync(SecureStoreVars.Tokens.RefreshToken, oauthResponse.refresh_token);
+                dispatch(setRefreshToken(oauthResponse.refresh_token));
+                console.log('getTokens Done');
+            }
         }
         catch(error){
             console.log(error);
@@ -156,9 +167,10 @@ export const getTokensFromOauth = () => {
 export const getRefreshFromStorage = () => {
     return async(dispatch:Dispatch) => {
         console.log('getRefreshFromStorage')
-        let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-
-        dispatch(setRefreshToken(refToken));
+        const refToken = await SecureStore.getItemAsync(SecureStoreVars.Tokens.RefreshToken);
+        if (refToken){
+            dispatch(setRefreshToken(refToken));
+        }
     }
 }
 
@@ -166,16 +178,18 @@ export const getAccessFromRefresh = () => {
     return async(dispatch:Dispatch) => {
         console.log('getAccessFromRefresh')
 
-        let refToken = await SecureStore.getItemAsync(SecureStoreVars.RefreshToken);
-        var res = await tda.getAccessFromRefreshToken(refToken);
+        const refToken= await SecureStore.getItemAsync(SecureStoreVars.Tokens.RefreshToken);
+        if (refToken){
+            var res = await tda.getAccessFromRefreshToken(refToken);
 
-        dispatch(setAccessToken(res.access_token));
+            dispatch(setAccessToken(res.access_token));
+        }
 
     }
 }
 
 export const getUserPrincipalData = () => {
-    return async(dispatch:Dispatch, getState) => {
+    return async(dispatch:Dispatch, getState:any) => {
         console.log('getUserPrincipalData')
         let resJson = await tda.getuserprincipals(getState().tda.accessToken)
         //console.log(JSON.stringify(resJson))
@@ -201,14 +215,14 @@ export const getPrincipalData = createAsyncThunk(
 
 
 // Selectors
-export const selectLoginLoading = state => state.tda.loginLoading;
-export const selectRefreshToken = state => state.tda.refreshToken;
-export const selectAccessToken = state => state.tda.accessToken;
-export const selectUserPrincipals = state => state.tda.userPrincipals;
-export const selectSocketConnected = state => state.tda.socketConnected;
-export const selectSocketAuth = state => state.tda.socketAuthenticated;
-export const selectWatchlist = state => state.tda.watchlistData;
-export const selectAccountData = state => state.tda.accountData;
+export const selectLoginLoading = (state:RootState) => state.tda.loginLoading;
+export const selectRefreshToken = (state:RootState) => state.tda.refreshToken;
+export const selectAccessToken = (state:RootState) => state.tda.accessToken;
+export const selectUserPrincipals = (state:RootState) => state.tda.userPrincipals;
+export const selectSocketConnected = (state:RootState) => state.tda.socketConnected;
+export const selectSocketAuth = (state:RootState) => state.tda.socketAuthenticated;
+export const selectWatchlist = (state:RootState) => state.tda.watchlistData;
+export const selectAccountData = (state:RootState) => state.tda.accountData;
 
 export const {  setRefreshToken, 
                 setAccessToken, 

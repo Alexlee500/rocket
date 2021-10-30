@@ -24,7 +24,7 @@ import DataTableCell from '../Components/DataTable/DataTableCell';
 export default function AccountScreen() {
     const dispatch = useDispatch();
     const PrincipalData = useSelector( selectUserPrincipals )
-    const AccountData:SecuritiesAccount = useSelector(selectAccountData)
+    const AccountData:SecuritiesAccount | null= useSelector(selectAccountData)
     const allEntities = useSelector(quoteSelector.selectEntities);
 
     const [accountPositions, setAccountPositions] = React.useState([]);
@@ -32,37 +32,40 @@ export default function AccountScreen() {
 
 
     useEffect(() => {
-        const result = {};
-        AccountData.securitiesAccount.positions.forEach((item) => {
-            const { averagePrice, shortQuantity, longQuantity } = item
-            const { symbol, assetType, putCall, description} = item.instrument
-            const underlyingSymbol = item.instrument.underlyingSymbol || symbol
-            const quantity = shortQuantity || longQuantity
-            
 
-            if (!result[underlyingSymbol]) {
-                result[underlyingSymbol] = []
-            }
+    if (AccountData){        
+        const result:any = {};
+            AccountData.securitiesAccount.positions.forEach((item) => {
+                const { averagePrice, shortQuantity, longQuantity } = item
+                const { symbol, assetType, putCall, description} = item.instrument
+                const underlyingSymbol = item.instrument.underlyingSymbol || symbol
+                const quantity = shortQuantity || longQuantity
+                
 
-            result[underlyingSymbol].push({
-                symbol,
-                description,
-                assetType,
-                averagePrice,
-                quantity,
-                shortQuantity, 
-                longQuantity,
-                putCall
+                if (!result[underlyingSymbol]) {
+                    result[underlyingSymbol] = []
+                }
+
+                result[underlyingSymbol].push({
+                    symbol,
+                    description,
+                    assetType,
+                    averagePrice,
+                    quantity,
+                    shortQuantity, 
+                    longQuantity,
+                    putCall
+                })
             })
-        })
 
-        const final = Object.keys(result)
-            .sort()
-            .map((key) => ({
-                underlyingSymbol: key,
-                positions: result[key]
-            }));
-        setAccountPositions(final)
+            const final:any = Object.keys(result)
+                .sort()
+                .map((key) => ({
+                    underlyingSymbol: key,
+                    positions: result[key]
+                }));
+            setAccountPositions(final)
+        }
     }, [AccountData])
 
     let printDebug = () => {

@@ -6,6 +6,7 @@ import tdaReducer from './features/tdaSlice'
 import quoteReducer from './features/quoteSlice'
 import chartReducer from './features/chartSlice'
 import chartHistoryReducer from './features/chartHistory'
+import store from './store'
 const rootReducer = combineReducers({
     auth: authReducer,
     tda: tdaReducer,
@@ -14,5 +15,4 @@ const rootReducer = combineReducers({
     chartHistory: chartHistoryReducer
 })
 
-export type RootState = ReturnType<typeof rootReducer>
 export default rootReducer

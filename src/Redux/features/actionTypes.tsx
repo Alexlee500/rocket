@@ -5,9 +5,8 @@ import {
     WEBSOCKET_DISCONNECT,
     WEBSOCKET_MESSAGE,
     WEBSOCKET_OPEN,
-    WEBSOCKET_SEND,
-    
-  } from '@alexlee500/redux-websocket/ReduxWebsocket'
+    WEBSOCKET_SEND   
+    } from '@alexlee500/redux-websocket/ReduxWebsocket'
 
 const WEBSOCKET_PREFIX = 'REDUX_WEBSOCKET'
 

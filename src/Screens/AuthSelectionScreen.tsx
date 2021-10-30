@@ -9,7 +9,6 @@ import { authenticate, promptBio } from '../Redux/features/authSlice';
 import { clearTokens, resetConnections } from '../Redux/features/tdaSlice';
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
 
-import { RootState } from '../Redux/rootReducer';
 
 
 
