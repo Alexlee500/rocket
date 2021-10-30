@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import  {Text, View, Button } from 'react-native';
+import  {Text, View, Button, Alert } from 'react-native';
 import { Switch, Modal } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 import { useDispatch } from 'react-redux';
 import Colors from '../configs/Colors'
@@ -29,17 +30,38 @@ export default function LoginScreen(){
 
     const onToggleRememberMe = async() => {
         if (rememberMe){
+            const doLogout = await AsyncWarnLogout();
+            if (doLogout) {
+                await SecureStore.deleteItemAsync(SecureStoreVars.Options.Login.RememberLogin);
+                setRememberMe(false);
+            }  
 
-            await SecureStore.deleteItemAsync(SecureStoreVars.Options.Login.RememberLogin);
-            setRememberMe(false);
         }
         else{
-            await SecureStore.setItemAsync(SecureStoreVars.Options.Login.RememberLogin, '1');
-            setRememberMe(true)
+            const canBio = await LocalAuthentication.authenticateAsync({promptMessage: 'Confirm Biometric Login', cancelLabel: 'cancel', disableDeviceFallback: true});
+            if (canBio){
+                await SecureStore.setItemAsync(SecureStoreVars.Options.Login.RememberLogin, '1');
+                setRememberMe(true)
+            }
         }
     }
 
+    const AsyncWarnLogout = async() => new Promise<boolean>((resolve) => {
+        Alert.alert(
+            "Please Confirm",
+            "You are about to remove the User saved on this device",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => resolve(false)
+                },{
+                    text: "Continue",
+                    onPress: () => resolve(true)
+                }
 
+            ]
+        )
+    })
 
 
     return (
@@ -54,11 +76,7 @@ export default function LoginScreen(){
             />
             <Switch value={rememberMe} onValueChange={onToggleRememberMe}/>
 
-            <Modal visible={visible} dismissable={false}>
-                <Text>Please Confirm</Text>
-                <Text>You are about to remove the User Saved on this device</Text>
-                <Button title="Cancel"/><Button title="Continue"/>
-            </Modal>
+            
         </View>
     )
 }
