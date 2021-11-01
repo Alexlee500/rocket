@@ -87,11 +87,15 @@ declare interface UserPrincipals {
 
 
 declare interface Watchlists {
-    name: string,
-    watchlistId: string,
-    accountId: string,
-    status: string,
-    watchlistItems: watchlistItem[]
+    [index:number]:{
+        name: string,
+        watchlistId: string,
+        accountId: string,
+        status: string,
+        watchlistItems:{
+            [index:number]:watchlistItem
+        }
+}
 }
 
 declare interface watchlistItem {

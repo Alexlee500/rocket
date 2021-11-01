@@ -1,4 +1,6 @@
 import {authorize, AuthConfiguration} from 'react-native-app-auth';
+import { useDispatch, useSelector} from 'react-redux';
+
 import { getTime, endOfToday } from 'date-fns'
 
 import AmeritradeConf from '../configs/AmeritradeConf'
@@ -76,7 +78,7 @@ export async function getAccessFromRefreshToken(refreshToken:string) : Promise<A
     return await res.json();
 }
 
-export async function getuserprincipals(accessToken: string) : Promise<UserPrincipals>{
+export async function getUserPrincipalData(accessToken: string) : Promise<UserPrincipals>{
     const resourceUrl = "https://api.tdameritrade.com/v1/userprincipals?fields=streamerSubscriptionKeys%2CstreamerConnectionInfo";
     var res = await fetch(resourceUrl, {
         headers: {

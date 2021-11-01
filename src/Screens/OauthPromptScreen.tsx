@@ -3,7 +3,7 @@ import  {Text, View, Button } from 'react-native';
 import * as tda from '../api/AmeritradeApi';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { RootState } from '../Redux/rootReducer';
+import { RootState } from '../Redux/store';
 import { getTokensFromOauth, getRefreshFromStorage} from '../Redux/features/tdaSlice';
 
 export default function OauthPromptScreen() {

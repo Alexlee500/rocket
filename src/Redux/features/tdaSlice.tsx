@@ -22,8 +22,8 @@ interface tdaSlice{
     loginLoading: boolean
     socketConnected: boolean
     socketAuthenticated: boolean
-    refreshToken?: string
-    accessToken?: string
+    refreshToken: string
+    accessToken: string
     userPrincipals: UserPrincipals | null
     watchlistData: Watchlists | null
     accountData: SecuritiesAccount | null
@@ -154,6 +154,8 @@ export const getTokensFromOauth = () => {
             const oauthResponse = await tda.oauthApiLogin();
             if (oauthResponse){
                 SecureStore.setItemAsync(SecureStoreVars.Tokens.RefreshToken, oauthResponse.refresh_token);
+                SecureStore.setItemAsync(SecureStoreVars.Tokens.RefreshTokenExpiry, oauthResponse.refresh_token_expires_in.toString());
+
                 dispatch(setRefreshToken(oauthResponse.refresh_token));
                 console.log('getTokens Done');
             }
@@ -191,7 +193,7 @@ export const getAccessFromRefresh = () => {
 export const getUserPrincipalData = () => {
     return async(dispatch:Dispatch, getState:any) => {
         console.log('getUserPrincipalData')
-        let resJson = await tda.getuserprincipals(getState().tda.accessToken)
+        let resJson = await tda.getUserPrincipalData(getState().tda.accessToken)
         //console.log(JSON.stringify(resJson))
         dispatch(setUserPrincipalJson(await resJson))
     }   
@@ -208,7 +210,7 @@ export const getAccessToken = createAsyncThunk(
 export const getPrincipalData = createAsyncThunk(
     'tda/getPrincipalData',
     async(accessToken: string) => {
-        let resJson = await tda.getuserprincipals(accessToken)
+        let resJson = await tda.getUserPrincipalData(accessToken)
         return resJson        
     }
 )

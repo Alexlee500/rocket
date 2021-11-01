@@ -90,7 +90,7 @@ export default function LoginLoadingScreen() {
         const hasAccessToken = async() => {
             if (accessToken){
                 console.log(`has access`)
-                let pd = await tda.getuserprincipals(accessToken.access_token);
+                let pd = await tda.getUserPrincipalData(accessToken.access_token);
                 dispatch(setUserPrincipalJson(pd));
                 var wl = await tda.getWatchlistsForAccount(accessToken.access_token, pd.accounts[0].accountId)
                 dispatch(setWatchlistData(wl))

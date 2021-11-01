@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../Redux/rootReducer';
+import { RootState } from '../Redux/store';
+import { selectAccessToken } from '../Redux/features/tdaSlice'
 
 import  AuthTestScreen  from '../Screens/AuthTestScreen'
 import  DeAuthTestScreen from '../Screens/DeAuthTestScreen'
@@ -10,26 +11,27 @@ import  DeAuthTestScreen from '../Screens/DeAuthTestScreen'
 import OauthPromptScreen from '../Screens/OauthPromptScreen';
 import AuthStackNavigator from './AuthStackNavigator';
 import AppStackNavigator from './AppStackNavigator';
-import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
+import LoginScreen from '../Screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
 export default function RootNavigationContainer(){
     const authenticated = useSelector( (state: RootState) => state.auth.authenticated )
+    const access = useSelector( selectAccessToken )
 
 
     return (
         <NavigationContainer>
             <Stack.Navigator headerMode="none">
-                { authenticated ? (
+                { access ? (
                     <Stack.Screen
                     name="App"
                     component={AppStackNavigator}
                     />
                 ):(
                     <Stack.Screen
-                        name="AuthStack"
-                        component={AuthStackNavigator}
+                        name="LoginScreen"
+                        component={LoginScreen}
                     />
                 )}
             </Stack.Navigator>

@@ -4,8 +4,8 @@ import  {Text, View, Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { RootState } from '../Redux/rootReducer';
-import { selectRefreshToken, selectSocketAuth, selectLoginLoading } from '../Redux/features/tdaSlice'
+import { RootState } from '../Redux/store';
+import { selectRefreshToken, selectSocketAuth, selectLoginLoading, selectAccessToken } from '../Redux/features/tdaSlice'
 
 import DeAuthTestScreen from '../Screens/DeAuthTestScreen';
 import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
@@ -22,9 +22,10 @@ export default function AppStackNavigator(){
     const loginLoading = useSelector( selectLoginLoading )
     const sockAuth = useSelector( selectSocketAuth )
     const refresh = useSelector( selectRefreshToken )
-
+    const access = useSelector( selectAccessToken )
 
     return (
+        /*
         <Stack.Navigator headerMode="none">
             {
                 (refresh != null) ? (
@@ -49,5 +50,20 @@ export default function AppStackNavigator(){
                 )
             }
         </Stack.Navigator>
+        */
+        <Stack.Navigator headerMode="none" initialRouteName="LoginLoading">
+            <Stack.Screen
+                name="LoginLoading"
+                component={LoginLoadingScreen}
+            />
+            <Stack.Screen
+                name="App"
+                component={AppTabNavigator}
+            />
+        </Stack.Navigator>
+
     )
+    
+
+
 }
