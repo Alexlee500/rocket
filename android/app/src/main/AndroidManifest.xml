@@ -1,6 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"   
-  xmlns:tools="http://schemas.android.com/tools"
-  package="com.rocket">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" package="com.rocket">
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -36,6 +34,7 @@
         <data android:scheme="com.rocket"/>
       </intent-filter>
     </activity>
+    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
     <activity android:name="net.openid.appauth.RedirectUriReceiverActivity"
       tools:node="replace">
         <intent-filter>
@@ -47,6 +46,7 @@
                 android:path="/oauth" />
         </intent-filter>
       </activity>
-    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
-  </application>
+
+
+    </application>
 </manifest>
