@@ -19,7 +19,7 @@ export default function RootNavigationContainer(){
     const authenticated = useSelector( (state: RootState) => state.auth.authenticated )
     const access = useSelector( selectAccessToken )
 
-
+    console.log(access);
     return (
         <NavigationContainer>
             <Stack.Navigator headerMode="none">

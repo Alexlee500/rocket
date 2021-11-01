@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import  {Text, View, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import * as tda from '../api/AmeritradeApi';
@@ -23,7 +23,7 @@ import {
     selectAccountData,
     selectWatchlist
     } from '../Redux/features/tdaSlice'
-export default function LoginLoadingScreen2({navigation: {navigate}){
+export default function LoginLoadingScreen2({navigation}){
     const dispatch = useDispatch();
 
     const AccessToken:string = useSelector(selectAccessToken);
@@ -101,7 +101,7 @@ export default function LoginLoadingScreen2({navigation: {navigate}){
                 dispatch(send(subRequestQuotes))
                 var subRequestOptions = subscribeOptions(PrincipalData, subscribeOptionsList.toString())
                 dispatch(send(subRequestOptions))
-                navigate('App');
+                navigation.navigate('App');
             }
         }
 

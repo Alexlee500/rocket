@@ -16,27 +16,15 @@ import { setAccessToken } from '../Redux/features/tdaSlice'
 export default function LoginScreen(){
     const dispatch = useDispatch();
     const [rememberMe, setRememberMe] = useState(false);
-
+    const [RefreshToken, setRefreshToken] = useState('');
     useEffect(() => {
         const getRememberLogin = async () => {
             const remember:boolean = (await SecureStore.getItemAsync(SecureStoreVars.Options.Login.RememberLogin)) ? true : false;
             const RefreshToken: string|null = (await SecureStore.getItemAsync(SecureStoreVars.Tokens.RefreshToken));
-
             setRememberMe(remember);
-
+            setRefreshToken(RefreshToken || '');
             if (rememberMe && RefreshToken!= null){
-                const auth = (await LocalAuthentication.authenticateAsync({
-                    promptMessage: 'Unlock', 
-                    cancelLabel: 'cancel',
-                    disableDeviceFallback: true
-                }));
-                
-                if (auth.success){
-                    const accessToken:AccessToken = (await tda.getAccessFromRefreshToken(RefreshToken));
-                    if (accessToken != null){
-                        dispatch(setAccessToken(accessToken.access_token));
-                    }
-                }
+                await Bio();
 
 
             }
@@ -45,6 +33,20 @@ export default function LoginScreen(){
         getRememberLogin()
     }, [])
 
+    const Bio = async()=> {
+        const auth = (await LocalAuthentication.authenticateAsync({
+            promptMessage: 'Unlock', 
+            cancelLabel: 'cancel',
+            disableDeviceFallback: true
+        }));
+        if (auth.success){
+            const accessToken:AccessToken = (await tda.getAccessFromRefreshToken(RefreshToken));
+            if (accessToken != null){
+                console.log(accessToken)
+                dispatch(setAccessToken(accessToken.access_token));
+            }
+        }
+    }
     const onToggleRememberMe = async() => {
         if (rememberMe){
             const doLogout = await AsyncWarnLogout();
@@ -90,7 +92,7 @@ export default function LoginScreen(){
             />            
             <Button
                 title="Biometrics"
-                onPress={async() => dispatch(promptBio())}
+                onPress={async() => Bio()}
             />
             <Switch value={rememberMe} onValueChange={onToggleRememberMe}/>
 

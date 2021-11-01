@@ -9,6 +9,8 @@ import { selectRefreshToken, selectSocketAuth, selectLoginLoading, selectAccessT
 
 import DeAuthTestScreen from '../Screens/DeAuthTestScreen';
 import LoginLoadingScreen from '../Screens/LoginLoadingScreen';
+import LoginLoadingScreen2 from '../Screens/LoginLoadingScreen2';
+
 import OauthPromptScreen from '../Screens/OauthPromptScreen';
 import AppTabNavigator from './AppTabNavigator';
 const Stack = createStackNavigator();
@@ -54,7 +56,7 @@ export default function AppStackNavigator(){
         <Stack.Navigator headerMode="none" initialRouteName="LoginLoading">
             <Stack.Screen
                 name="LoginLoading"
-                component={LoginLoadingScreen}
+                component={LoginLoadingScreen2}
             />
             <Stack.Screen
                 name="App"

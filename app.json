@@ -1,4 +1,7 @@
 {
   "name": "rocket",
-  "displayName": "rocket"
+  "displayName": "rocket",
+  "android": {
+    "package": "com.rocket"
+  }
 }
