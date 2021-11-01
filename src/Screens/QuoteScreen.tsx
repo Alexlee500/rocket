@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { ScrollView, StyleSheet, View, Dimensions, PanResponder } from "react-native"
 import { Appbar, List, Card, Title, Paragraph, Button, Text, ToggleButton} from 'react-native-paper';
 import { useDispatch, useSelector} from 'react-redux';
+//@ts-ignore
 import { send } from '@alexlee500/redux-websocket/ReduxWebsocket'
 import { Svg, G, Path , Polyline } from 'react-native-svg'
 import * as d3 from "d3";
