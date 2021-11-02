@@ -38,7 +38,7 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     const ytdChart = useSelector(ytdSelector.selectEntities);
 
     const PrincipalData:any = useSelector( selectUserPrincipals )
-    const AccessToken:any = useSelector( selectAccessToken )
+    const AccessToken:string = useSelector( selectAccessToken )
 
     const [Symbol, setSymbol] = React.useState(route.params.symbol)
     const [chartPeriod, setPeriod] = React.useState(defaultChartPeriod);
@@ -48,31 +48,32 @@ export default function QuoteScreen ( {navigation: {goBack}, route} ) {
     let percentDelta:number = ChartUtils.percentDelta(quoteData[quoteFieldMap.Close], quoteData[quoteFieldMap.Mark])
 
     useEffect(() => {
-        if (AccessToken?.access_token){
+        if (AccessToken){
             onLoad();
         }
         async function onLoad () {
             dispatch(send(ChartEquityRequest(PrincipalData, Symbol)));
-            let marketHours = await getMarketHours(AccessToken.access_token, "EQUITY");
+            let marketHours = await getMarketHours(AccessToken, "EQUITY");
             setMarketIsOpen(marketHours?.equity?.EQ?.isOpen || false);   
 
-            let dayCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "1", "minute", "10", true, marketIsOpen ? getTime(endOfToday()) : null)
+            let dayCD = await getChartHistory(AccessToken, Symbol, "day", "1", "minute", "10", true, marketIsOpen ? getTime(endOfToday()) : null)
             dayCD = renameChartCandles(dayCD);
+            console.log('day' + dayCD)
             dispatch(setDayChart(dayCD))
 
-            let weekCD = await getChartHistory(AccessToken.access_token, Symbol, "day", "5", "minute", "30", true, marketIsOpen ? getTime(endOfToday()) : null)
+            let weekCD = await getChartHistory(AccessToken, Symbol, "day", "5", "minute", "30", true, marketIsOpen ? getTime(endOfToday()) : null)
             weekCD = renameChartCandles(weekCD)
             dispatch(setWeekChart(weekCD))
 
-            let monthCD = await getChartHistory(AccessToken.access_token, Symbol, "month", "1", "daily", "1", true);
+            let monthCD = await getChartHistory(AccessToken, Symbol, "month", "1", "daily", "1", true);
             monthCD = renameChartCandles(monthCD);
             dispatch(setMonthChart(monthCD))
             
-            let yearCD = await getChartHistory(AccessToken.access_token, Symbol, "year", "1", "daily", "1", true)
+            let yearCD = await getChartHistory(AccessToken, Symbol, "year", "1", "daily", "1", true)
             yearCD = renameChartCandles(yearCD);
             dispatch(setYearChart(yearCD));
 
-            let ytdCD = await getChartHistory(AccessToken.access_token, Symbol, "ytd", "1", "daily", "1", true)
+            let ytdCD = await getChartHistory(AccessToken, Symbol, "ytd", "1", "daily", "1", true)
             ytdCD = renameChartCandles(ytdCD);
             dispatch(setYtdChart(ytdCD));
 

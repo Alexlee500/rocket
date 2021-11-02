@@ -23,7 +23,6 @@ const Chart = ({height, priceHistory } : Props) => {
     const getPath = () => {
         try{
             let dataArr = Object.values(priceHistory).sort( (a, b) => {return a[candleFieldMap.Time] - b[candleFieldMap.Time]})
-
             const xScale = scaleLinear()
                 .domain([0, dataArr.length])
                 .range([10, Dimensions.get('window').width -10])

@@ -44,6 +44,7 @@ export default function LoginLoadingScreen2({navigation}){
             dispatch(setAccountData(AccountData));
             dispatch(connect(`wss://${PrincipalData.streamerInfo.streamerSocketUrl}/ws`))
         }
+        console.log('start login loading')
         loadAccountData();
     }, [])
 
@@ -101,6 +102,7 @@ export default function LoginLoadingScreen2({navigation}){
                 dispatch(send(subRequestQuotes))
                 var subRequestOptions = subscribeOptions(PrincipalData, subscribeOptionsList.toString())
                 dispatch(send(subRequestOptions))
+                console.log('done time to nav' + subRequestOptions)
                 navigation.navigate('App');
             }
         }
