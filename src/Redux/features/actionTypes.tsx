@@ -1,3 +1,4 @@
+//@ts-ignore
 import {
     WEBSOCKET_BROKEN,
     WEBSOCKET_CLOSED,
@@ -6,7 +7,7 @@ import {
     WEBSOCKET_MESSAGE,
     WEBSOCKET_OPEN,
     WEBSOCKET_SEND   
-    } from '@alexlee500/redux-websocket/ReduxWebsocket'
+    } from '@alexlee500/redux-websocket'
 
 const WEBSOCKET_PREFIX = 'REDUX_WEBSOCKET'
 

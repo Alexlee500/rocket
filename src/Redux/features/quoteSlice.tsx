@@ -38,6 +38,7 @@ const quoteSlice = createSlice({
         },
 
     },
+
     extraReducers:(builder) => {
         builder
         .addCase(REDUX_WEBSOCKET_MESSAGE, (state, action:any) => {

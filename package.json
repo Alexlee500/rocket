@@ -10,8 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@alexlee500/redux-websocket": "https://github.com/Alexlee500/redux-websocket.git",
-    "@giantmachines/redux-websocket": "^1.5.0",
+    "@alexlee500/redux-websocket": "git+https://github.com/Alexlee500/redux-websocket.git",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-picker/picker": "^1.15.0",
     "@react-navigation/bottom-tabs": "^5.11.10",
@@ -20,7 +19,7 @@
     "@react-navigation/stack": "^5.14.4",
     "@reduxjs/toolkit": "^1.5.1",
     "add": "^2.0.6",
-    "d3": "^6.7.0",
+    "d3": "^7.1.1",
     "date-fns": "^2.21.1",
     "expo": "^43.0.1",
     "expo-local-authentication": "~12.0.1",
@@ -47,13 +46,19 @@
     "redux-socket.io": "^1.4.0",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
-    "ws": "^7.4.5",
-    "yarn": "^1.22.10"
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "@babel/core": "^7.13.15",
     "@babel/runtime": "^7.13.10",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/d3": "^7.1.0",
+    "@types/d3-scale": "^4.0.2",
+    "@types/d3-shape": "^3.0.2",
+    "@types/jest": "^27.0.2",
+    "@types/react": "^17.0.33",
+    "@types/react-native": "^0.66.1",
+    "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^26.6.3",
     "eslint": "^7.24.0",
     "jest": "^26.6.3",

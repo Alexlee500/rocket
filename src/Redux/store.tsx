@@ -7,8 +7,8 @@ import quoteReducer from './features/quoteSlice'
  
 //import reduxWebsocket from '@giantmachines/redux-websocket';
 //@ts-ignore
-import { ReduxWebsocket } from '@alexlee500/redux-websocket/ReduxWebsocket'
-/*
+import { ReduxWebsocket } from '@alexlee500/redux-websocket'
+/*r
 const rootReducer = combineReducers({
     auth: authReducer,
     tda: tdaReducer,

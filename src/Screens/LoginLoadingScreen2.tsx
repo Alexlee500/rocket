@@ -3,7 +3,7 @@ import  {Text, View, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import * as tda from '../api/AmeritradeApi';
 //@ts-ignore
-import { connect, send } from '@alexlee500/redux-websocket/ReduxWebsocket'
+import { connect, send } from '@alexlee500/redux-websocket'
 import { renameQuoteResponse, renameApiResponse } from '../api/AmeritradeHelper';
 import { upsertQuotes } from '../Redux/features/quoteSlice';
 
