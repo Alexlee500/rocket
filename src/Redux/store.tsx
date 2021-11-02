@@ -7,13 +7,9 @@ import quoteReducer from './features/quoteSlice'
  
 //import reduxWebsocket from '@giantmachines/redux-websocket';
 //@ts-ignore
-import { ReduxWebsocket } from '@alexlee500/redux-websocket'
-/*r
-const rootReducer = combineReducers({
-    auth: authReducer,
-    tda: tdaReducer,
-    quote: quoteReducer
-})*/
+import ReduxWebsocket from '@alexlee500/redux-websocket'
+
+
 
 const reduxWebsocketMiddleware  = ReduxWebsocket({reconnectOnClose:false});
 let store =  configureStore({
