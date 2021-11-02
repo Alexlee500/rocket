@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Button, SafeAreaView, StyleSheet} from 'react-native';
+import {Text, View, Button, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import { Provider } from 'react-redux';
 import { DarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,13 +10,15 @@ import RootNavigationContainer from './Navigation/RootNavigationContainer';
 import Colors from './configs/Colors'
 
 const App = () => {
+    
     return (
         <Provider store={store}>
         <PaperProvider theme={theme}>
+        <StatusBar backgroundColor="black" />
             <RootNavigationContainer />
         </PaperProvider>
         </Provider>
-    )
+    )    
 }
 
 
