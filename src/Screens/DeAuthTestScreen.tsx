@@ -1,15 +1,11 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button } from 'react-native';
-import { BarChart, Grid } from 'react-native-svg-charts'
-//import { connect, send  } from '@giantmachines/redux-websocket';
-import { connect, send } from '@alexlee500/redux-websocket'
 
 import { parseISO } from 'date-fns'
 
 import { useDispatch, useSelector } from 'react-redux';
 import { clearTokens, selectUserPrincipals } from '../Redux/features/tdaSlice';
 import { deauthenticate } from '../Redux/features/authSlice';
-import { RootState } from '../Redux/rootReducer';
 import { subscribeAccountActivity, subscribeQuote } from '../api/AmeritradeSockRequests';
 
 import * as tda from '../api/AmeritradeApi';
@@ -41,9 +37,7 @@ export default function DeAuthTestScreen(){
 
     return(
         <>
-        <BarChart style={{ height: 200 }} data={data} svg={{ fill }} contentInset={{ top: 30, bottom: 30 }}>
-            <Grid />
-        </BarChart>
+
         <Button   
             title="Log Out"
             onPress={() => logoutTest()}

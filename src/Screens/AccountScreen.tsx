@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import  {Text, View, Button, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { connect, send, disconnect } from '@alexlee500/redux-websocket'
+import { connect, send, disconnect } from '../Redux/middleware/ReduxWebsocket'
 
 
 import { resetConnections, selectAccountData, selectUserPrincipals } from '../Redux/features/tdaSlice';

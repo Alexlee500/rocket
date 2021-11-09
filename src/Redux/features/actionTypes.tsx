@@ -7,7 +7,7 @@ import {
     WEBSOCKET_MESSAGE,
     WEBSOCKET_OPEN,
     WEBSOCKET_SEND   
-    } from '@alexlee500/redux-websocket'
+    } from '../middleware/ReduxWebsocket'
 
 const WEBSOCKET_PREFIX = 'REDUX_WEBSOCKET'
 

@@ -8,7 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { selectUserPrincipals, resetConnections } from '../Redux/features/tdaSlice';
 import { deauthenticate } from '../Redux/features/authSlice';
-import { send, disconnect } from '@alexlee500/redux-websocket'
+import { send, disconnect } from '../Redux/middleware/ReduxWebsocket'
 import { LogoutRequest } from '../api/AmeritradeSockRequests';
 
 import AccountScreen from '../Screens/AccountScreen';

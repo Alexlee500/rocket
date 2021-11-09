@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View, Dimensions, PanResponder } from "react-na
 import { Appbar, List, Card, Title, Paragraph, Button, Text, ToggleButton} from 'react-native-paper';
 import { useDispatch, useSelector} from 'react-redux';
 //@ts-ignore
-import { send } from '@alexlee500/redux-websocket'
+import { send } from '../Redux/middleware/ReduxWebsocket'
 import { Svg, G, Path , Polyline } from 'react-native-svg'
 import * as d3 from "d3";
 import * as shape from "d3-shape";

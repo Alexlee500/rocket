@@ -13,10 +13,8 @@ const App = () => {
     
     return (
         <Provider store={store}>
-        <PaperProvider theme={theme}>
         <StatusBar backgroundColor="black" />
             <RootNavigationContainer />
-        </PaperProvider>
         </Provider>
     )    
 }
